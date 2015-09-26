@@ -14,11 +14,6 @@ It is Arrayable, Jsonable and validatable.
 Also provided are the means to make nested validation possible for data objects (containing futher data objects).
 
 
-## To Do
-
-- Add way to vendor:publish some standard validation messages for nested validation
-
-
 ## Install
 
 Via Composer
