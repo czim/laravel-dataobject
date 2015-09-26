@@ -7,5 +7,6 @@ class TestNestedDataObject extends AbstractDataObject
 {
     protected $rules = [
         'nested' => 'required|dataobject:Czim\\DataObject\\Test\\Helpers\\TestDataObject',
+        'more'   => 'dataobject:Czim\\DataObject\\Test\\Helpers\\TestDataObject',
     ];
 }

@@ -25,7 +25,7 @@ class DataObjectValidationTest extends TestCase
     /**
      * @test
      */
-    function it_validates_nested_data_objects()
+    function it_validates_nested_data_objects_for_required_nested_invalid_data()
     {
         $data = new TestNestedDataObject();
 
@@ -56,14 +56,53 @@ class DataObjectValidationTest extends TestCase
 
         // Note that the validation.dataobject message is the custom message for which there is
         // no translation in this test!
-
-        // should pass validation if all is well
-        $nestedData->name = 'in order';
     }
 
     /**
      * @test
-     * @depends it_validates_nested_data_objects
+     */
+    function it_validates_nested_data_objects_for_required_nested_valid_data()
+    {
+        $data         = new TestNestedDataObject();
+        $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
+
+        $this->assertTrue($data->validate(), "validation should pass for valid nested data");
+    }
+
+    /**
+     * @test
+     * @depends it_validates_nested_data_objects_for_required_nested_valid_data
+     */
+    function it_it_validates_nested_data_objects_for_optional_invalid_data()
+    {
+        $data = new TestNestedDataObject();
+        $data->nested = [ 'name' => 'no problem' ];
+        $data->more   = new TestDataObject([ 'irrelevant' => 'nothing' ]);
+
+        $this->assertFalse($data->validate(), "validation should fail for invalid optional nested data");
+        $this->assertRegExp('#name .*required#i', $data->messages()->get('more.name')[0]);
+    }
+
+    /**
+     * @test
+     * @depends it_validates_nested_data_objects_for_required_nested_valid_data
+     */
+    function it_it_validates_nested_data_objects_for_optional_valid_data()
+    {
+        $data = new TestNestedDataObject();
+        $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
+
+        // should pass when more is empty
+        $this->assertTrue($data->validate(), "validation should pass for omitted optional nested data");
+
+        $data->more = ['name' => 'also fine'];
+
+        // should also pass when more is valid
+        $this->assertTrue($data->validate(), "validation should pass for valid optional nested data");
+    }
+
+    /**
+     * @test
      */
     function it_fails_validation_if_value_for_nested_dataobject_rule_could_not_be_interpreted()
     {
