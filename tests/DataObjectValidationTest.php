@@ -2,6 +2,7 @@
 namespace Czim\DataObject\Test;
 
 use Czim\DataObject\DataObjectServiceProvider;
+use Czim\DataObject\Test\Helpers\TestArrayValidationDataObject;
 use Czim\DataObject\Test\Helpers\TestBrokenNestedDataObject;
 use Czim\DataObject\Test\Helpers\TestDataObject;
 use Czim\DataObject\Test\Helpers\TestNestedDataObject;
@@ -53,8 +54,8 @@ class DataObjectValidationTest extends TestCase
             'Incorrect or missing message for nested main'
         );
 
-        // Note that the validation.dataobject message is the custom message for which there is no translation
-        // in this test!
+        // Note that the validation.dataobject message is the custom message for which there is
+        // no translation in this test!
 
         // should pass validation if all is well
         $nestedData->name = 'in order';
@@ -101,7 +102,26 @@ class DataObjectValidationTest extends TestCase
      */
     function it_allows_the_use_of_the_each_validation_rule_for_arrays()
     {
-        // add test
+        $data = new TestArrayValidationDataObject();
+
+        $data->array = [ 'string', 'longer string' ];
+
+        $this->assertTrue($data->validate(), "Should validate with valid data");
+
+        $data->array = [ 34, 'longer string', 'tiny' ];
+
+        $this->assertFalse($data->validate(), "Should not validate with invalid data");
+
+        // only the item with index 0 and 2 are invalid
+        $messages = $data->messages();
+
+        $this->assertGreaterThanOrEqual(2, $messages->count(), "Should be at least 2 messages");
+
+        $this->assertRegExp(
+            '#array .*at least 5 characters#i',
+            $messages->get('array.2')[0],
+            "Validation message (array.2) incorrect"
+        );
     }
 
 
