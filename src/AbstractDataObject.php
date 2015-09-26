@@ -210,6 +210,15 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         unset($this->attributes[$key]);
     }
 
+    /**
+     * Counts the attributes (overrides ArrayObject)
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->attributes);
+    }
 
     // ------------------------------------------------------------------------------
     //      Conversion and Array Access
@@ -222,9 +231,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      */
     public function toArray()
     {
-        if ( ! isset($this->attributes)) {
-            return null;
-        }
+        if (empty($this->attributes)) return [];
 
         // make this work recursively
         $array = [];
@@ -343,6 +350,12 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      */
     public function offsetSet($offset, $value)
     {
+        if ( ! $this->magicAssignment) {
+            throw new UnassignableAttributeException("Not allowed to assign value by magic with array access");
+        }
+
+        $this->checkAttributeAssignable($offset);
+
         $this->attributes[ $offset ] = $value;
     }
 
