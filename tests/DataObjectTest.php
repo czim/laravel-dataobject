@@ -13,8 +13,8 @@ class DataObjectTest extends TestCase
         $data = new Helpers\TestDataObject();
 
         $this->assertNull($data->getAttribute('unset_key'), 'unassigned attribute was not null (getAttribute)');
-
         $this->assertNull($data->unset_attribute, 'unassigned attribute was not null (magic)');
+        $this->assertNull($data['unset_array_key'], 'unassigned attribute was not null (array access)');
     }
 
     /**
@@ -22,15 +22,20 @@ class DataObjectTest extends TestCase
      */
     function it_stores_and_retrieves_attributes_individually()
     {
-        $data = new Helpers\TestDataObject();
-
         // method assignment
+        $data = new Helpers\TestDataObject();
         $data->setAttribute('name', 'some test value');
         $this->assertEquals('some test value', $data->getAttribute('name'), 'method assignment failed');
 
         // magic assignment
+        $data = new Helpers\TestDataObject();
         $data->name = 'some test value';
         $this->assertEquals('some test value', $data->name, 'magic assignment failed');
+
+        // array access
+        $data = new Helpers\TestDataObject();
+        $data['name'] = 'some test value';
+        $this->assertEquals('some test value', $data['name'], 'array assignment failed');
     }
     
     /**
@@ -76,7 +81,11 @@ class DataObjectTest extends TestCase
         $messages = $data->messages();
         $this->assertInstanceOf(MessageBag::class, $messages, 'validation messages not of correct type');
         $this->assertCount(1, $messages, 'validation messages should have 1 message');
-        $this->assertRegExp('#name .*is required#i', $messages->first(), 'validation message not as expected for empty data');
+        $this->assertRegExp(
+            '#name .*is required#i',
+            $messages->first(),
+            'validation message not as expected for empty data'
+        );
 
         // validate partially incorrect data
         $data->name = 'Valid name';
@@ -86,7 +95,11 @@ class DataObjectTest extends TestCase
 
         $messages = $data->messages();
         $this->assertCount(1, $messages, 'validation messages should have 1 message');
-        $this->assertRegexp('#list .*must be an array#i', $messages->first(), 'validation message not as expected for incorrect data');
+        $this->assertRegexp(
+            '#list .*must be an array#i',
+            $messages->first(),
+            'validation message not as expected for incorrect data'
+        );
 
         // validate correct data should be okay
         $data->name = 'Valid name';
@@ -94,6 +107,11 @@ class DataObjectTest extends TestCase
 
         $this->assertTrue($data->validate(), 'Correct data should pass validation');
     }
+
+
+    // ------------------------------------------------------------------------------
+    //      Restrictive measures
+    // ------------------------------------------------------------------------------
 
     /**
      * @test
@@ -131,4 +149,127 @@ class DataObjectTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     */
+    function it_allows_setting_attributes_through_method_if_disallowing_assignment_by_magic()
+    {
+        $data = new Helpers\TestMagiclessDataObject();
+
+        $data->setAttribute('name', 'okay');
+        $this->assertEquals('okay', $data->name, 'Should still allow normal assignment');
+    }
+
+    /**
+     * @test
+     * @expectedException \Czim\DataObject\Exceptions\UnassignableAttributeException
+     * @expectedExceptionMessageRegExp #not allowed .*magic#i
+     */
+    function it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely()
+    {
+        $data = new Helpers\TestMagiclessDataObject();
+
+        $data->magic_blows_up = 'fails';
+    }
+
+    /**
+     * @test
+     * @depends it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely
+     * @expectedException \Czim\DataObject\Exceptions\UnassignableAttributeException
+     * @expectedExceptionMessageRegExp #not allowed .*magic#i
+     */
+    function it_throws_an_exception_when_assigning_by_array_access_if_disallowing_magic()
+    {
+        $data = new Helpers\TestMagiclessDataObject();
+
+        $data['array_access'] = 'fails as well';
+    }
+
+
+    // ------------------------------------------------------------------------------
+    //      Array Access, Jsonable
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @test
+     */
+    function it_is_arrayable()
+    {
+        $data = new Helpers\TestDataObject([
+            'mass'       => 'testing',
+            'assignment' => 2242,
+        ]);
+
+        $array = $data->toArray();
+
+        $this->assertInternalType('array', $array, 'toArray() did not return array');
+        $this->assertCount(2, $array, 'incorrect item count');
+        $this->assertArraySubset(
+            [
+                'mass'       => 'testing',
+                'assignment' => 2242,
+            ],
+            $array, 'incorrect array contents'
+        );
+    }
+
+    /**
+     * @test
+     */
+    function it_is_jsonable()
+    {
+        $data = new Helpers\TestDataObject([
+            'mass'       => 'testing',
+            'assignment' => 2242,
+        ]);
+
+        $this->assertEquals('{"mass":"testing","assignment":2242}', $data->toJson(), 'incorrect toJson result');
+    }
+
+    /**
+     * @test
+     */
+    function it_outputs_json_when_cast_to_string()
+    {
+        $data = new Helpers\TestDataObject([
+            'mass'       => 'testing',
+            'assignment' => 2242,
+        ]);
+
+        $json = (string) $data;
+
+        $this->assertEquals('{"mass":"testing","assignment":2242}', $json, 'incorrect stringified result');
+    }
+
+    /**
+     * @test
+     */
+    function it_is_convertable_to_an_object()
+    {
+        $data = new Helpers\TestDataObject([
+            'mass'       => 'testing',
+            'assignment' => 2242,
+        ]);
+
+        $object = $data->toObject();
+
+        $this->assertTrue(is_object($object), "not an object");
+        $this->assertEquals('testing', $object->mass, 'incorrect property (1)');
+        $this->assertEquals(2242, $object->assignment, 'incorrect property (2)');
+    }
+
+    /**
+     * @test
+     */
+    function it_is_countable()
+    {
+        $data = new Helpers\TestDataObject([
+            'one'   => 'testing',
+            'two'   => 23,
+            'three' => [ 'help', 'me', 'im', 'trapped', 'in', 'a', 'test', 'factory' ],
+        ]);
+
+        $this->assertEquals(3, $data->count());
+        $this->assertCount(3, $data);
+    }
 }
