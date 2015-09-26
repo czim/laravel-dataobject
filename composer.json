@@ -1,0 +1,43 @@
+{
+    "name": "czim/laravel-dataobject",
+    "description": "Basic validatable standardized data object.",
+    "keywords": [
+        "data object",
+        "standardization",
+        "validate",
+        "validation"
+    ],
+    "homepage": "https://github.com/czim/laravel-dataobject",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Coen Zimmerman",
+            "email": "coen@pixelindustries.com",
+            "homepage": "http://www.pixelindustries.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*",
+        "scrutinizer/ocular": "~1.1",
+        "orchestra/testbench": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Czim\\DataObject\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Czim\\DataObject\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
