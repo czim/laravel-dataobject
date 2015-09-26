@@ -56,6 +56,8 @@ class TestDataObject extends \Czim\DataObject\AbstractDataObject
     ...
 ```
 
+Attempts to set attributes on the DataObject by magic or array access will then throw an `UnassignableAttributeException`.
+
 
 ### Optionally add validation rules for attributes 
 
