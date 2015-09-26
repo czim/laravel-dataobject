@@ -55,7 +55,7 @@ $data = new \YourNameSpace\FirstDataObject([
 ]))->validate();
 ```
 
-### Validate arrays
+### Validate Arrays
 
 `Czim\DataObject\Validation\Traits\ValidateArraysTrait`
 
@@ -77,3 +77,17 @@ protected $rules = [
 
 Mainly added because it is so commonly useful, and this allows for easier installation in some cases.
 Plus I do not see how it could hurt.
+
+
+### Validation Messages
+
+The nested DataObject validation adds a standard translatable validation message for when anything in a nested DataObject validation fails for a given (parent) attribute key.
+You may add translations for this as follows:
+
+In `resources/lang/en/validation.php` (or any other relevant language path), add:
+```php
+    'dataobject' => 'The :attribute contains invalid data.',
+```
+
+Replacement values available are `:dataobject`, for the fully qualified namespace of the DataObject validated against,
+and `:friendlydataobject` which only shows the class name.
