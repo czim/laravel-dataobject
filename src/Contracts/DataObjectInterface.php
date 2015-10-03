@@ -1,7 +1,13 @@
 <?php
 namespace Czim\DataObject\Contracts;
 
-interface DataObjectInterface
+use ArrayAccess;
+use Countable;
+use Illuminate\Contracts\Support\Arrayable;
+use IteratorAggregate;
+use Serializable;
+
+interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, IteratorAggregate, Serializable
 {
     /**
      * Get attribute
