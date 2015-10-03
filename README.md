@@ -81,7 +81,7 @@ Validating the data can be done as follows:
         
         $messages = $dataObject->messages();
         
-        // messages() returns a standard Laravel ErrorBag
+        // messages() returns a standard Laravel MessageBag
         dd( $messages->first() );
     }
 ```
