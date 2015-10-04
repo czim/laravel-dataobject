@@ -1,6 +1,7 @@
 <?php
 namespace Czim\DataObject;
 
+use ArrayIterator;
 use ArrayObject;
 use Czim\DataObject\Contracts\DataObjectInterface;
 use Czim\DataObject\Exceptions\UnassignableAttributeException;
@@ -368,6 +369,16 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     public function offsetUnset($offset)
     {
         unset($this->attributes[ $offset ]);
+    }
+
+
+    // ------------------------------------------------------------------------------
+    //      Iterator
+    // ------------------------------------------------------------------------------
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->attributes);
     }
 
 }
