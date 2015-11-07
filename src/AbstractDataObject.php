@@ -6,6 +6,7 @@ use ArrayObject;
 use Czim\DataObject\Contracts\DataObjectInterface;
 use Czim\DataObject\Exceptions\UnassignableAttributeException;
 use Czim\DataObject\Traits\ValidatableTrait;
+use Illuminate\Contracts\Support\Arrayable;
 
 abstract class AbstractDataObject extends ArrayObject implements DataObjectInterface
 {
@@ -237,14 +238,48 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
 
         foreach ($this->attributes as $key => $attribute) {
 
-            if (is_a($attribute, DataObjectInterface::class)) {
+
+            if (is_a($attribute, Arrayable::class)) {
+                /** @var Arrayable $attribute */
                 $attribute = $attribute->toArray();
+
+            } elseif (is_array($attribute)) {
+
+                $attribute = $this->recursiveToArray($attribute);
             }
 
             $array[$key] = $attribute;
         }
 
         return $array;
+    }
+
+    /**
+     * Recursively converts parameter to array
+     *
+     * @param mixed $item
+     * @return array
+     */
+    protected function recursiveToArray($item)
+    {
+        if (is_array($item)) {
+
+            foreach ($item as &$subitem) {
+
+                $subitem = $this->recursiveToArray($subitem);
+            }
+            unset($subitem);
+
+            return $item;
+        }
+
+        if (is_a($item, Arrayable::class)) {
+            /** @var Arrayable $item */
+
+            return $item->toArray();
+        }
+
+        return $item;
     }
 
     /**
