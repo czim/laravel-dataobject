@@ -287,4 +287,37 @@ class DataObjectTest extends TestCase
         $this->assertEquals(3, $data->count());
         $this->assertCount(3, $data);
     }
+
+    /**
+     * @test
+     */
+    function it_recursively_deals_with_nested_arrayables()
+    {
+        $data = new Helpers\TestDataObject([
+            'contents' => new Helpers\TestDataObject([
+                'mass'       => 'testing',
+                'assignment' => 2242,
+            ]),
+            'more' => [
+                new Helpers\TestDataObject([ 'a' => 'b' ]),
+            ],
+        ]);
+
+        $array = $data->toArray();
+
+        $this->assertInternalType('array', $array, 'nested toArray() did not return array');
+        $this->assertCount(2, $array, 'incorrect item count');
+        $this->assertArraySubset(
+            [
+                'contents' => [
+                    'mass'       => 'testing',
+                    'assignment' => 2242,
+                ],
+                'more' => [
+                    [ 'a' => 'b' ],
+                ],
+            ],
+            $array, 'incorrect nested array contents'
+        );
+    }
 }
