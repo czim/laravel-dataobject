@@ -37,6 +37,21 @@ class DataObjectTest extends TestCase
         $data['name'] = 'some test value';
         $this->assertEquals('some test value', $data['name'], 'array assignment failed');
     }
+
+    /**
+     * @test
+     */
+    function it_handles_array_updates_by_reference()
+    {
+        $data = new Helpers\TestDataObject();
+
+        $data->setAttribute('array', [ 'testing 0' ]);
+
+        $data->array[] = 'testing 1';
+        $data->array[] = 'testing 2';
+
+        $this->assertCount(3, $data->getAttribute('array'), 'array push failed, wrong count');
+    }
     
     /**
      * @test

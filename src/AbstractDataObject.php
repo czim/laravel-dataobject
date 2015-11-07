@@ -82,7 +82,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param string $key
      * @return mixed
      */
-    public function getAttribute($key)
+    public function &getAttribute($key)
     {
         return $this->getAttributeValue($key);
     }
@@ -93,9 +93,16 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param string $key
      * @return mixed
      */
-    protected function getAttributeValue($key)
+    protected function &getAttributeValue($key)
     {
-        return (isset($this->attributes[$key])) ? $this->attributes[$key] : null;
+        if (isset($this->attributes[$key])) {
+
+            return $this->attributes[ $key ];
+        }
+
+        $null = null;
+
+        return $null;
     }
 
     /**
@@ -159,16 +166,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      */
     public function &__get($key)
     {
-        // old approach was to use getAttribute($key),
-        // but that does not allow direct modification of arrays
-        // by creating new entries: object->array[] = ...
-
-        // always defaults to null if not set
-        if ( ! array_key_exists($key, $this->attributes)) {
-            $this->attributes[$key] = null;
-        }
-
-        return $this->attributes[$key];
+        return $this->getAttribute($key);
     }
 
     /**
