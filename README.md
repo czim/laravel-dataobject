@@ -4,6 +4,7 @@
 [![Software License][ico-license]](LICENSE.md)
 [![Build Status](https://travis-ci.org/czim/laravel-dataobject.svg?branch=master)](https://travis-ci.org/czim/laravel-dataobject)
 [![Latest Stable Version](http://img.shields.io/packagist/v/czim/laravel-dataobject.svg)](https://packagist.org/packages/czim/laravel-dataobject)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/369fd4d7-b2d1-4438-9e08-e7ad586b81c4/mini.png)](https://insight.sensiolabs.com/projects/369fd4d7-b2d1-4438-9e08-e7ad586b81c4)
 
 Basic framework for making standardized but flexible data objects.
 This provides a class (and interfaces) to use to standardize your dependencies or return values with a generic dataobject.
