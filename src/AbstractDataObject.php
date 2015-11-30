@@ -154,6 +154,16 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         $this->attributes = array_merge($this->attributes, $attributes);
     }
 
+    /**
+     * Returns list of key names for the (top level) attributes
+     *
+     * @return array
+     */
+    public function getKeys()
+    {
+        return array_keys($this->attributes);
+    }
+
 
     // ------------------------------------------------------------------------------
     //      Magic Getting/Setting

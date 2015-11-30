@@ -53,4 +53,11 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
      */
     public function toObject($recursive = true);
 
+    /**
+     * Returns list of key names for the (top level) attributes
+     *
+     * @return array
+     */
+    public function getKeys();
+
 }
