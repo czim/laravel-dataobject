@@ -416,6 +416,50 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
 
 
     // ------------------------------------------------------------------------------
+    //      Dot Notation
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Returns nested content by dot notation, similar to Laravel's Arr::get()
+     *
+     * Works with nested arrays and data objects
+     *
+     * @param string $key       dot-notation representation of keys
+     * @param mixed  $default   default value to return if nothing found, may be a callback
+     * @return mixed
+     */
+    public function getNested($key, $default = null)
+    {
+        if (is_null($key)) {
+            return $this;
+        }
+
+        if (isset($this->attributes[$key])) {
+            return $this->getAttribute($key);
+        }
+
+        $keys = explode('.', $key);
+        $part = $this->getAttribute( array_shift($keys) );
+
+
+        foreach ($keys as $index => $segment) {
+
+            if (is_a($part, DataObjectInterface::class)) {
+                return $part->getNested(implode('.', array_slice($keys, $index)), $default);
+            }
+
+            if ( ! is_array($part) || ! array_key_exists($segment, $part)) {
+                return value($default);
+            }
+
+            $part = $part[ $segment ];
+        }
+
+        return $part;
+    }
+
+
+    // ------------------------------------------------------------------------------
     //      Iterator
     // ------------------------------------------------------------------------------
 

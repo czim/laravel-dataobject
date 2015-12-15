@@ -320,4 +320,35 @@ class DataObjectTest extends TestCase
             $array, 'incorrect nested array contents'
         );
     }
+
+
+    // ------------------------------------------------------------------------------
+    //      Dot Notation
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @test
+     */
+    function it_takes_dot_notation_to_get_nested_data_at_depth()
+    {
+        $data = new Helpers\TestDataObject([
+            'top' => 'test',
+            'contents' => new Helpers\TestDataObject([
+                'mass'       => 'testing',
+                'assignment' => 2242,
+            ]),
+            'more' => [
+                new Helpers\TestDataObject([ 'a' => 'b' ]),
+            ],
+            'array' => [ 'normal' => 'nested' ],
+        ]);
+
+        $this->assertEquals('test', $data->getNested('top'), 'Incorrect value for top level attribute');
+        $this->assertEquals('nested', $data->getNested('array.normal'), 'Incorrect value for nested array');
+        $this->assertEquals('testing', $data->getNested('contents.mass'), 'Incorrect value for recursive nested DataObject');
+        $this->assertEquals('b', $data->getNested('more.0.a'), 'Incorrect value for recursive nested DataObject in array');
+
+        $this->assertEquals('DEF', $data->getNested('more.1.4.3.hop', 'DEF'), 'Expecting default for wrong key');
+    }
+
 }

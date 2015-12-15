@@ -60,4 +60,13 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
      */
     public function getKeys();
 
+    /**
+     * Returns nested content by dot notation, similar to Laravel's Arr::get()
+     *
+     * @param string $key       dot-notation representation of keys
+     * @param mixed  $default   default value to return if nothing found, may be a callback
+     * @return mixed
+     */
+    public function getNested($key, $default = null);
+
 }
