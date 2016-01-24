@@ -61,6 +61,13 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
     public function getKeys();
 
     /**
+     * Clears all attributes
+     *
+     * @return $this
+     */
+    public function clear();
+
+    /**
      * Returns nested content by dot notation, similar to Laravel's Arr::get()
      *
      * @param string $key       dot-notation representation of keys

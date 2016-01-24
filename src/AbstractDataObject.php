@@ -164,6 +164,17 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         return array_keys($this->attributes);
     }
 
+    /**
+     * Clears all attributes
+     *
+     * @return $this
+     */
+    public function clear()
+    {
+        $this->attributes = [];
+
+        return $this;
+    }
 
     // ------------------------------------------------------------------------------
     //      Magic Getting/Setting
