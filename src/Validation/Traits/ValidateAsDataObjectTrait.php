@@ -42,8 +42,8 @@ trait ValidateAsDataObjectTrait
 
         // If the value is not already a DataObject of the type set in
         // the validation rule, make it so
-        if (   ! is_a($value, DataObjectInterface::class)
-            || ! is_a($value, $dataObjectClass)
+        if (   ! ($value instanceof DataObjectInterface)
+            || ! ($value instanceof $dataObjectClass)
         ) {
             $value = $this->createDataObjectFrom($value, $parameters[0]);
 
@@ -88,10 +88,15 @@ trait ValidateAsDataObjectTrait
      */
     protected function createDataObjectFrom($value, $className)
     {
+        // If the value is already the correct object, return it unaltered
+        if ($value instanceof $className) {
+            return $value;
+        }
+
         // Convert object to array so it can be used to set
         // attributes in the DataObject
 
-        if (is_a($value, Arrayable::class)) {
+        if ($value instanceof Arrayable) {
 
             $value = $value->toArray();
 
@@ -116,7 +121,7 @@ trait ValidateAsDataObjectTrait
             throw new InvalidArgumentException($dataObjectClass . ' is not instantiable as a DataObject', 0, $e);
         }
 
-        if ( ! is_a($dataObject, DataObjectInterface::class)) {
+        if ( ! ($dataObject instanceof DataObjectInterface)) {
 
             throw new InvalidArgumentException($dataObjectClass . ' is not a validatable DataObject');
         }
