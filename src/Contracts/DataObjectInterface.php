@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use IteratorAggregate;
 use Serializable;
 
-interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, IteratorAggregate, Serializable
+interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, IteratorAggregate, Serializable, ValidatableInterface
 {
     /**
      * Get attribute
