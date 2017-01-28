@@ -5,6 +5,5 @@ use Illuminate\Validation\Validator;
 
 class ExtendedValidator extends Validator
 {
-    use Traits\ValidateArraysTrait,
-        Traits\ValidateAsDataObjectTrait;
+    use Traits\ValidateAsDataObjectTrait;
 }
