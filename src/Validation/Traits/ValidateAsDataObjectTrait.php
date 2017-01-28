@@ -51,7 +51,7 @@ trait ValidateAsDataObjectTrait
 
                 $this->messages->add(
                     $attribute,
-                    $this->doReplacements(
+                    $this->makeReplacements(
                         "Value for :attribute could not be interpreted as :friendlydataobject",
                         $attribute, 'dataobject', $parameters
                     )
