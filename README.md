@@ -15,6 +15,16 @@ It is Arrayable, Jsonable and validatable.
 Also provided are the means to make nested validation possible for data objects (containing futher data objects).
 
 
+## Version Compatibility
+
+ Laravel      | Package 
+:-------------|:--------
+ 5.1.x        | 1.0.x
+ 5.2.x        | 1.0.x
+ 5.3.x        | 1.3.x
+ 5.4.x and up | 1.4.x
+
+
 ## Install
 
 Via Composer
