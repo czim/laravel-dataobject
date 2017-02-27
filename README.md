@@ -3,6 +3,7 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
 [![Build Status](https://travis-ci.org/czim/laravel-dataobject.svg?branch=master)](https://travis-ci.org/czim/laravel-dataobject)
+[![Coverage Status](https://coveralls.io/repos/github/czim/laravel-dataobject/badge.svg?branch=master)](https://coveralls.io/github/czim/laravel-dataobject?branch=master)
 [![Latest Stable Version](http://img.shields.io/packagist/v/czim/laravel-dataobject.svg)](https://packagist.org/packages/czim/laravel-dataobject)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/369fd4d7-b2d1-4438-9e08-e7ad586b81c4/mini.png)](https://insight.sensiolabs.com/projects/369fd4d7-b2d1-4438-9e08-e7ad586b81c4)
 
