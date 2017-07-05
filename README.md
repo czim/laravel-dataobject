@@ -117,6 +117,93 @@ Note that this will rebind the `Validator` facade, so if you have done this your
 Read more information about [the validation (traits) here](VALIDATION.md).
 
 
+## Castable Data Object
+
+You may opt to extend the `Czim\DataObject\CastableDataObject`. 
+Besides the standard features, this also includes the possibility of casting its properties to scalar values or (nested) data objects. This works similarly to Eloquent's `$casts` property (with some minor differences).
+
+By overriding a protected `casts()` method, it is possible to set a cast type per attribute key:
+
+```php
+<?php
+protected function casts()
+{
+    return [
+        'check' => 'boolean',
+        'count' => 'integer',
+        'price' => 'float',
+    ];    
+}       
+```
+
+This has the effect of casting each property to its set type before returning it.
+
+```php
+<?php
+$object = new YourDataObject([
+    'check' => 'truthy value',
+    'price' => 45,
+]);
+
+$object->check;     // true
+$object['price'];   // 45.0
+$object->count;     // 0 (instead of null)
+```
+
+### toArray Casting
+
+Cast types are also applied for the `toArray()` method of the data object. 
+This means that unset properties will be present in the array as their default value (`false` for boolean, `0.0` for float, etc.).
+
+To disable this behaviour, set `$castToArray` to `false`.
+This will entirely disable casting values on `toArray()`. 
+
+
+### Nested Object Casting
+
+More useful than scalar-casting, is object casting. This will allow you to create a tree of nested objects that, if set, can be invoked fluently.
+
+Given casts that are set as follows:
+
+```php
+<?php
+class RootDataObject extends \Czim\DataObject\CastableDataObject
+{
+    protected function casts()
+    {
+        return [
+            'some_object' => YourDataObject::class,
+            'object_list' => YourDataObject::class . '[]',
+        ];    
+    }       
+}
+```
+
+And with the following data example, you can access the data by property:
+
+```
+<?php
+$data = [
+    'some_object' => [
+        'type' => 'peaches',
+    ],
+    'object_list' => [
+        ['type' => 'cucumbers'],
+        ['type' => 'sherry'],
+    ],
+];
+
+$object = new RootDataobject($data);
+
+$object->some_object;           // instance of YourDataObject
+$object->some_object->type;     // peaches
+$object->object_list[1]->type;  // sherry
+```
+
+Note that unset or `null` values will return `null`, not an empty data object. Non-array values will cause exceptions to be thrown on being interpreted as data objects.
+
+This behaviour can be changed by setting the `$castUnsetObjects` property to `true`: unset attributes with an object cast will then be cast as an empty instance of that object class.
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
