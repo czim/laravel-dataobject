@@ -24,6 +24,13 @@ class CastableDataObject extends AbstractDataObject
     protected $castUnsetObjects = false;
 
     /**
+     * If true, performs casts on toArray.
+     *
+     * @var bool
+     */
+    protected $castToArray = true;
+
+    /**
      * Returns cast types per attribute key.
      *
      * Cast types may include: 'boolean', 'integer', 'float', 'date',
@@ -54,6 +61,45 @@ class CastableDataObject extends AbstractDataObject
         $this->applyCast($key);
 
         return parent::getAttributeValue($key);
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $this->applyCasts(true);
+
+        return parent::toArray();
+    }
+
+    /**
+     * Applies casts to currently set attributes.
+     *
+     * This updates the values stored for the attributes with a cast type.
+     *
+     * @param bool $scalarOnly
+     */
+    protected function applyCasts($scalarOnly = false)
+    {
+        if ( ! $scalarOnly) {
+
+            foreach (array_keys($this->casts()) as $key) {
+
+                $this->applyCast($key);
+            }
+        }
+
+        foreach ($this->casts() as $key => $type) {
+
+            if ( ! in_array($type, static::SCALAR_CASTS)) {
+                continue;
+            }
+
+            $this->applyCast($key);
+        }
     }
 
     /**
