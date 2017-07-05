@@ -259,9 +259,8 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
 
         foreach ($this->attributes as $key => $attribute) {
 
+            if ($attribute instanceof Arrayable) {
 
-            if (is_a($attribute, Arrayable::class)) {
-                /** @var Arrayable $attribute */
                 $attribute = $attribute->toArray();
 
             } elseif (is_array($attribute)) {
