@@ -73,8 +73,6 @@ class CastableDataObjectTest extends TestCase
     {
         $data = new Helpers\TestCastDataObject();
 
-        $this->assertNull($data->object);
-
         $data->object = [
             'test' => 'testing',
         ];
@@ -107,6 +105,60 @@ class CastableDataObjectTest extends TestCase
         $this->assertInstanceOf(TestDataObject::class, $objects[1]);
         $this->assertEquals('testing a', $objects[0]->test);
         $this->assertEquals('testing b', $objects[1]->test);
+    }
+
+    /**
+     * @test
+     */
+    function it_returns_null_for_an_unset_attribute_cast_as_an_object()
+    {
+        $data = new Helpers\TestCastDataObject();
+
+        $this->assertNull($data->object);
+    }
+
+    /**
+     * @test
+     */
+    function it_returns_empty_objects_for_an_unset_attribute_cast_as_an_object_if_configured_to()
+    {
+        $data = new Helpers\TestCastDataObjectCastNull();
+
+        $this->assertInstanceOf(TestDataObject::class, $data->object);
+    }
+
+    /**
+     * @test
+     */
+    function it_casts_attributes_on_toArray()
+    {
+        $data = new Helpers\TestCastDataObject();
+
+        $data->int     = '6';
+        $data->object  = new TestDataObject(['type' => 'object']);
+        $data->objects = [
+            ['test' => 'testing a'],
+            ['test' => 'testing b'],
+        ];
+
+        $array = $data->toArray();
+
+        $this->assertInternalType('array', $array);
+        $this->assertCount(7, $array);
+        $this->assertArrayHasKey('int', $array);
+        $this->assertSame(6, $array['int']);
+        $this->assertArrayHasKey('object', $array);
+        $this->assertEquals(['type' => 'object'], $array['object']);
+        $this->assertArrayHasKey('objects', $array);
+        $this->assertEquals([['test' => 'testing a'], ['test' => 'testing b']], $array['objects']);
+        $this->assertArrayHasKey('bool', $array);
+        $this->assertSame(false, $array['bool']);
+        $this->assertArrayHasKey('float', $array);
+        $this->assertSame(0.0, $array['float']);
+        $this->assertArrayHasKey('string', $array);
+        $this->assertSame('', $array['string']);
+        $this->assertArrayHasKey('array', $array);
+        $this->assertSame([], $array['array']);
     }
 
 }
