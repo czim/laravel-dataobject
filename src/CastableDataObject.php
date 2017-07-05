@@ -14,6 +14,14 @@ use UnexpectedValueException;
  */
 class CastableDataObject extends AbstractDataObject
 {
+    const SCALAR_CASTS = ['boolean', 'integer', 'float', 'string', 'array'];
+
+    /**
+     * If true, returns an empty dataobject instance for unset or null values.
+     *
+     * @var bool
+     */
+    protected $castUnsetObjects = false;
 
     /**
      * Returns cast types per attribute key.
@@ -43,24 +51,37 @@ class CastableDataObject extends AbstractDataObject
      */
     public function &getAttributeValue($key)
     {
+        $this->applyCast($key);
+
+        return parent::getAttributeValue($key);
+    }
+
+    /**
+     * Applies cast for a given attribute key.
+     *
+     * @param string $key
+     */
+    protected function applyCast($key)
+    {
         $casts = $this->casts();
 
         if ( ! count($casts) || ! array_key_exists($key, $casts)) {
-            return parent::getAttribute($key);
+            return;
         }
 
-        if ( ! isset($this->attributes[$key])) {
+        if ( ! isset($this->attributes[ $key ])) {
             $value = null;
         } else {
-            $value = $this->attributes[$key];
+            $value = $this->attributes[ $key ];
         }
 
-        if (in_array($casts[ $key ], ['boolean', 'integer', 'float', 'string', 'array'])) {
-            $value = call_user_func([$this, 'castValueAs' . ucfirst($casts[ $key ])], $value);
-            return $value;
+        // If the cast type is a simple scalar, apply it and return
+        if (in_array($casts[ $key ], static::SCALAR_CASTS)) {
+            $this->attributes[ $key ] = call_user_func([$this, 'castValueAs' . ucfirst($casts[ $key ])], $value);
+            return;
         }
 
-        // Fallback is to attempt a data object cast
+        // Otherwise attempt a data object cast
         $dataObjectClass = $casts[ $key ];
         $dataObjectArray = false;
 
@@ -72,19 +93,26 @@ class CastableDataObject extends AbstractDataObject
 
         if (null === $value) {
             if ($dataObjectArray) {
-                $value = [];
-                return $value;
+                $this->attributes[ $key ] = [];
+                return;
             }
-            return $value;
+
+            if ($this->castUnsetObjects) {
+                $this->attributes[ $key ] = $this->makeNestedDataObject($dataObjectClass, [], $key);
+            }
+            return;
         }
 
         if ($dataObjectArray) {
 
-            if (is_array($this->attributes[$key])) {
+            if (is_array($this->attributes[ $key ])) {
 
-                foreach ($this->attributes[$key] as $index => &$item) {
+                foreach ($this->attributes[ $key ] as $index => &$item) {
 
                     if (null === $item) {
+                        if ($this->castUnsetObjects) {
+                            $item = $this->makeNestedDataObject($dataObjectClass, [], $key . '.' . $index);
+                        }
                         continue;
                     }
 
@@ -96,18 +124,17 @@ class CastableDataObject extends AbstractDataObject
 
             unset($item);
 
-        } else {
-
-            if ( ! ($this->attributes[ $key ] instanceof $dataObjectClass)) {
-                $this->attributes[ $key ] = $this->makeNestedDataObject(
-                    $dataObjectClass,
-                    $this->attributes[ $key ],
-                    $key
-                );
-            }
+            return;
         }
 
-        return $this->attributes[$key];
+        // Single data object
+        if ( ! ($this->attributes[ $key ] instanceof $dataObjectClass)) {
+            $this->attributes[ $key ] = $this->makeNestedDataObject(
+                $dataObjectClass,
+                $this->attributes[ $key ],
+                $key
+            );
+        }
     }
 
     /**
