@@ -90,6 +90,8 @@ class CastableDataObject extends AbstractDataObject
 
                 $this->applyCast($key);
             }
+
+            return;
         }
 
         foreach ($this->casts() as $key => $type) {
