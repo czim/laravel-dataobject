@@ -19,7 +19,8 @@ class TestCastDataObjectCastNull extends CastableDataObject
     protected function casts()
     {
         return [
-            'object' => TestDataObject::class,
+            'object'  => TestDataObject::class,
+            'objects' => TestDataObject::class . '[]',
         ];
     }
 

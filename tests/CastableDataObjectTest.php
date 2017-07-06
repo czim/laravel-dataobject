@@ -109,6 +109,32 @@ class CastableDataObjectTest extends TestCase
 
     /**
      * @test
+     * @expectedException \UnexpectedValueException
+     */
+    function it_throws_an_exception_if_it_cannot_cast_to_an_object()
+    {
+        $data = new Helpers\TestCastDataObject();
+
+        $data->object = 'not an array';
+
+        $data->object;
+    }
+
+    /**
+     * @test
+     * @expectedException \UnexpectedValueException
+     */
+    function it_throws_an_exception_if_it_cannot_cast_to_an_object_in_a_list()
+    {
+        $data = new Helpers\TestCastDataObject();
+
+        $data->objects = [ ['type' => 'an array'], 444];
+
+        $data->objects;
+    }
+
+    /**
+     * @test
      */
     function it_returns_null_for_an_unset_attribute_cast_as_an_object()
     {
@@ -125,6 +151,30 @@ class CastableDataObjectTest extends TestCase
         $data = new Helpers\TestCastDataObjectCastNull();
 
         $this->assertInstanceOf(TestDataObject::class, $data->object);
+    }
+
+    /**
+     * @test
+     */
+    function it_returns_null_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects()
+    {
+        $data = new Helpers\TestCastDataObject();
+
+        $data->objects = [
+            null,
+            ['type' => 'test'],
+            null,
+        ];
+
+        $objects = $data->objects;
+
+        $this->assertInternalType('array', $objects);
+        $this->assertCount(3, $objects);
+        $this->assertNull($objects[0]);
+        $this->assertNull($objects[2]);
+
+        $this->assertInstanceOf(TestDataObject::class, $objects[1]);
+        $this->assertEquals('test', $objects[1]->type);
     }
 
     /**
@@ -159,6 +209,29 @@ class CastableDataObjectTest extends TestCase
         $this->assertSame('', $array['string']);
         $this->assertArrayHasKey('array', $array);
         $this->assertSame([], $array['array']);
+    }
+
+    // ------------------------------------------------------------------------------
+    //      Use without casts
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @test
+     */
+    function it_works_normally_without_casts_set()
+    {
+        $data = new Helpers\TestCastDataObjectWithoutCasts();
+
+        $data->object = ['test' => 'testing'];
+        $data->float = 'not a float';
+
+        $this->assertSame(['test' => 'testing'], $data->object);
+        $this->assertSame('not a float', $data['float']);
+
+        $array = $data->toArray();
+        $this->assertCount(2, $array);
+        $this->assertSame(['test' => 'testing'], $array['object']);
+        $this->assertSame('not a float', $array['float']);
     }
 
 }
