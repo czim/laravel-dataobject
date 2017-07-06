@@ -84,6 +84,7 @@ class CastableDataObject extends AbstractDataObject
      */
     protected function applyCasts($scalarOnly = false)
     {
+        // @codeCoverageIgnoreStart
         if ( ! $scalarOnly) {
 
             foreach (array_keys($this->casts()) as $key) {
@@ -93,6 +94,7 @@ class CastableDataObject extends AbstractDataObject
 
             return;
         }
+        // @codeCoverageIgnoreEnd
 
         foreach ($this->casts() as $key => $type) {
 
@@ -165,6 +167,7 @@ class CastableDataObject extends AbstractDataObject
                     }
 
                     if ( ! ($item instanceof $dataObjectClass)) {
+
                         $item = $this->makeNestedDataObject($dataObjectClass, $item, $key . '.' . $index);
                     }
                 }
