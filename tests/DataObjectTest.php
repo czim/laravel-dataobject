@@ -123,6 +123,70 @@ class DataObjectTest extends TestCase
         $this->assertTrue($data->validate(), 'Correct data should pass validation');
     }
 
+    /**
+     * @test
+     */
+    function it_returns_keys_for_set_attributes()
+    {
+        $data = new Helpers\TestDataObject();
+
+        $data->key_set     = true;
+        $data->another_key = 'okay';
+        $data['last_key']  = 60;
+
+        $this->assertEquals(['key_set', 'another_key', 'last_key'], $data->getKeys());
+    }
+
+    /**
+     * @test
+     */
+    function it_clears_all_attributes()
+    {
+        $data = new Helpers\TestDataObject();
+
+        $data->key_set     = true;
+        $data->another_key = 'okay';
+
+        $data->clear();
+
+        $this->assertNull($data->key_set);
+        $this->assertNull($data['another_key']);
+    }
+    
+    /**
+     * @test
+     */
+    function it_performs_isset()
+    {
+        $data = new Helpers\TestDataObject();
+
+        $this->assertFalse(isset($data->key_name));
+
+        $data->key_name = 'test';
+
+        $this->assertTrue(isset($data->key_name));
+    }
+    
+    /**
+     * @test
+     */
+    function it_performs_unset()
+    {
+        $data = new Helpers\TestDataObject();
+
+        $data->key_name = 'test';
+
+        unset($data->key_name);
+
+        $this->assertFalse(isset($data->key_name));
+
+        $data->key_name = 'test';
+
+        unset($data['key_name']);
+
+        $this->assertFalse(isset($data->key_name));
+    }
+
 
     // ------------------------------------------------------------------------------
     //      Restrictive measures
@@ -244,6 +308,19 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
+    function it_is_json_serializable()
+    {
+        $data = new Helpers\TestDataObject([
+            'mass'       => 'testing',
+            'assignment' => 2242,
+        ]);
+
+        $this->assertEquals('{"mass":"testing","assignment":2242}', json_encode($data->jsonSerialize()), 'incorrect toJson result');
+    }
+
+    /**
+     * @test
+     */
     function it_outputs_json_when_cast_to_string()
     {
         $data = new Helpers\TestDataObject([
@@ -262,15 +339,27 @@ class DataObjectTest extends TestCase
     function it_is_convertable_to_an_object()
     {
         $data = new Helpers\TestDataObject([
-            'mass'       => 'testing',
+            'mass'       => ['test' => true],
             'assignment' => 2242,
         ]);
 
         $object = $data->toObject();
 
         $this->assertTrue(is_object($object), "not an object");
-        $this->assertEquals('testing', $object->mass, 'incorrect property (1)');
-        $this->assertEquals(2242, $object->assignment, 'incorrect property (2)');
+        $this->assertEquals(2242, $object->assignment, 'incorrect direct property');
+        $this->assertTrue(is_object($object->mass), "nested array not an object");
+        $this->assertEquals(true, $object->mass->test, 'incorrect nested property (mass)');
+
+
+        // Non-recursive
+        $data = new Helpers\TestDataObject([
+            'mass' => new Helpers\TestDataObject(['test' => true]),
+        ]);
+
+        $object = $data->toObject(false);
+
+        $this->assertTrue(is_object($object), "not an object");
+        $this->assertEquals(['test' => true], $object->mass);
     }
 
     /**
@@ -343,12 +432,28 @@ class DataObjectTest extends TestCase
             'array' => [ 'normal' => 'nested' ],
         ]);
 
+        // If the method gets called with a null value, the object itself is returned
+        $this->assertSame($data, $data->getNested(null));
+
         $this->assertEquals('test', $data->getNested('top'), 'Incorrect value for top level attribute');
         $this->assertEquals('nested', $data->getNested('array.normal'), 'Incorrect value for nested array');
         $this->assertEquals('testing', $data->getNested('contents.mass'), 'Incorrect value for recursive nested DataObject');
         $this->assertEquals('b', $data->getNested('more.0.a'), 'Incorrect value for recursive nested DataObject in array');
 
         $this->assertEquals('DEF', $data->getNested('more.1.4.3.hop', 'DEF'), 'Expecting default for wrong key');
+    }
+
+    /**
+     * @test
+     */
+    function it_returns_an_iterator()
+    {
+        $data = new Helpers\TestDataObject(['a' => 1, 'b' => 2]);
+
+        $iterator = $data->getIterator();
+
+        $this->assertInstanceOf(\ArrayIterator::class, $iterator);
+        $this->assertCount(2, $iterator);
     }
 
 }
