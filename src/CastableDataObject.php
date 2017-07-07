@@ -159,16 +159,13 @@ class CastableDataObject extends AbstractDataObject
 
                 foreach ($this->attributes[ $key ] as $index => &$item) {
 
-                    if (null === $item) {
-                        if ($this->castUnsetObjects) {
-                            $item = $this->makeNestedDataObject($dataObjectClass, [], $key . '.' . $index);
-                        }
+                    if (null === $item && ! $this->castUnsetObjects) {
                         continue;
                     }
 
                     if ( ! ($item instanceof $dataObjectClass)) {
 
-                        $item = $this->makeNestedDataObject($dataObjectClass, $item, $key . '.' . $index);
+                        $item = $this->makeNestedDataObject($dataObjectClass, $item ?: [], $key . '.' . $index);
                     }
                 }
             }
