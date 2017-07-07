@@ -217,7 +217,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      */
     public function __isset($key)
     {
-        return (isset($this->attributes[$key]) && ! is_null($this->getAttributeValue($key)));
+        return (isset($this->attributes[$key]) && null !== $this->getAttributeValue($key));
     }
 
     /**
@@ -293,8 +293,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
             return $item;
         }
 
-        if (is_a($item, Arrayable::class)) {
-            /** @var Arrayable $item */
+        if ($item instanceof Arrayable) {
 
             return $item->toArray();
         }
@@ -440,7 +439,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      */
     public function getNested($key, $default = null)
     {
-        if (is_null($key)) {
+        if (null === $key) {
             return $this;
         }
 
@@ -454,7 +453,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
 
         foreach ($keys as $index => $segment) {
 
-            if (is_a($part, DataObjectInterface::class)) {
+            if ($part instanceof DataObjectInterface) {
                 return $part->getNested(implode('.', array_slice($keys, $index)), $default);
             }
 
