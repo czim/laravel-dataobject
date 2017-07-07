@@ -69,6 +69,25 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
+    function it_casts_an_attribute_as_an_array()
+    {
+        $data = new Helpers\TestCastDataObject();
+
+        $this->assertSame([], $data->array);
+
+        $data->array = ['array'];
+        $this->assertSame(['array'], $data->array);
+
+        $data->array = 'string value';
+        $this->assertSame(['string value'], $data->array);
+
+        $data->array = new TestDataObject(['test' => 'type']);
+        $this->assertSame(['test' => 'type'], $data->array);
+    }
+
+    /**
+     * @test
+     */
     function it_casts_an_attribute_as_a_data_object()
     {
         $data = new Helpers\TestCastDataObject();
@@ -173,6 +192,29 @@ class CastableDataObjectTest extends TestCase
         $this->assertNull($objects[0]);
         $this->assertNull($objects[2]);
 
+        $this->assertInstanceOf(TestDataObject::class, $objects[1]);
+        $this->assertEquals('test', $objects[1]->type);
+    }
+
+    /**
+     * @test
+     */
+    function it_returns_empty_object_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects_if_configured_to()
+    {
+        $data = new Helpers\TestCastDataObjectCastNull();
+
+        $data->objects = [
+            null,
+            ['type' => 'test'],
+        ];
+
+        $objects = $data->objects;
+
+        $this->assertInternalType('array', $objects);
+        $this->assertCount(2, $objects);
+
+        $this->assertInstanceOf(TestDataObject::class, $objects[0]);
+        $this->assertNull($objects[0]->type);
         $this->assertInstanceOf(TestDataObject::class, $objects[1]);
         $this->assertEquals('test', $objects[1]->type);
     }
