@@ -181,7 +181,7 @@ class RootDataObject extends \Czim\DataObject\CastableDataObject
 
 And with the following data example, you can access the data by property:
 
-```
+```php
 <?php
 $data = [
     'some_object' => [
