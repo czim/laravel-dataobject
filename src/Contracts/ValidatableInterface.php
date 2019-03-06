@@ -1,5 +1,8 @@
 <?php
+
 namespace Czim\DataObject\Contracts;
+
+use Illuminate\Contracts\Support\MessageBag;
 
 interface ValidatableInterface
 {
@@ -7,29 +10,29 @@ interface ValidatableInterface
     /**
      * Validate attributes
      *
-     * @return boolean
+     * @return bool
      */
-    public function validate();
+    public function validate(): bool;
 
     /**
      * If validation tried and failed, returns validation messages
      *
-     * @return \Illuminate\Contracts\Support\MessageBag
+     * @return MessageBag
      */
-    public function messages();
+    public function messages(): MessageBag;
 
     /**
      * Returns currently set validation rules
      *
      * @return array
      */
-    public function getRules();
+    public function getRules(): array;
 
     /**
      * Sets validation rules
      *
      * @param array $rules
      */
-    public function setRules(array $rules);
+    public function setRules(array $rules): void;
 
 }

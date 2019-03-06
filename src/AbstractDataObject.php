@@ -1,4 +1,5 @@
 <?php
+
 namespace Czim\DataObject;
 
 use ArrayIterator;
@@ -7,10 +8,12 @@ use Czim\DataObject\Contracts\DataObjectInterface;
 use Czim\DataObject\Exceptions\UnassignableAttributeException;
 use Czim\DataObject\Traits\ValidatableTrait;
 use Illuminate\Contracts\Support\Arrayable;
+use Iterator;
 
 abstract class AbstractDataObject extends ArrayObject implements DataObjectInterface
 {
     use ValidatableTrait;
+
 
     /**
      * @var array
@@ -39,15 +42,12 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      */
     protected $magicAssignment = true;
 
-    /**
-     * Construct with attributes
-     *
-     * @param array $attributes
-     */
+
     public function __construct(array $attributes = [])
     {
         $this->setAttributes($attributes);
     }
+
 
     /**
      * Checks whether attribute key(s) may be assigned values
@@ -55,9 +55,11 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param string|array $attribute   array key name or array of key names
      * @throws UnassignableAttributeException
      */
-    protected function checkAttributeAssignable($attribute)
+    protected function checkAttributeAssignable($attribute): void
     {
-        if (empty($this->assignable)) return;
+        if (empty($this->assignable)) {
+            return;
+        }
 
         if (is_array($attribute)) {
 
@@ -83,7 +85,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param string $key
      * @return mixed
      */
-    public function &getAttribute($key)
+    public function &getAttribute(string $key)
     {
         return $this->getAttributeValue($key);
     }
@@ -94,7 +96,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param string $key
      * @return mixed
      */
-    protected function &getAttributeValue($key)
+    protected function &getAttributeValue(string $key)
     {
         if (isset($this->attributes[$key])) {
 
@@ -111,7 +113,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -121,9 +123,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * @param string $key
      * @param mixed  $value
-     * @return $this
+     * @return $this|DataObjectInterface
      */
-    public function setAttribute($key, $value)
+    public function setAttribute(string $key, $value): DataObjectInterface
     {
         $this->checkAttributeAssignable($key);
 
@@ -137,7 +139,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * @param array $attributes associative
      */
-    public function setAttributes(array $attributes)
+    public function setAttributes(array $attributes): void
     {
         $this->checkAttributeAssignable(array_keys($attributes));
 
@@ -149,7 +151,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * @param array $attributes
      */
-    public function setRawAttributes(array $attributes)
+    public function setRawAttributes(array $attributes): void
     {
         $this->attributes = array_merge($this->attributes, $attributes);
     }
@@ -157,9 +159,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Returns list of key names for the (top level) attributes
      *
-     * @return array
+     * @return string[]
      */
-    public function getKeys()
+    public function getKeys(): array
     {
         return array_keys($this->attributes);
     }
@@ -167,9 +169,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Clears all attributes
      *
-     * @return $this
+     * @return $this|DataObjectInterface
      */
-    public function clear()
+    public function clear(): DataObjectInterface
     {
         $this->attributes = [];
 
@@ -196,9 +198,8 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * @param string $key
      * @param mixed  $value
-     * @return void
      */
-    public function __set($key, $value)
+    public function __set($key, $value): void
     {
         if ( ! $this->magicAssignment) {
             throw new UnassignableAttributeException("Not allowed to assign value by magic");
@@ -236,7 +237,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->attributes);
     }
@@ -245,14 +246,11 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     //      Conversion and Array Access
     // ------------------------------------------------------------------------------
 
-    /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
-        if (empty($this->attributes)) return [];
+        if ( ! count($this->attributes)) {
+            return [];
+        }
 
         // make this work recursively
         $array = [];
@@ -278,23 +276,22 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * Recursively converts parameter to array
      *
      * @param mixed $item
-     * @return array
+     * @return array|string
      */
     protected function recursiveToArray($item)
     {
         if (is_array($item)) {
 
             foreach ($item as &$subitem) {
-
                 $subitem = $this->recursiveToArray($subitem);
             }
+
             unset($subitem);
 
             return $item;
         }
 
         if ($item instanceof Arrayable) {
-
             return $item->toArray();
         }
 
@@ -305,7 +302,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param bool $recursive
      * @return object
      */
-    public function toObject($recursive = true)
+    public function toObject(bool $recursive = true)
     {
         if ($recursive) {
             return $this->arrayToObject($this->attributes);
@@ -338,13 +335,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         return $obj;
     }
 
-    /**
-     * Convert the model instance to JSON.
-     *
-     * @param int $options
-     * @return string
-     */
-    public function toJson($options = 0)
+    public function toJson(int $options = 0): string
     {
         return json_encode($this->toArray(), $options);
     }
@@ -354,17 +345,12 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
 
-    /**
-     * Convert the object to its string representation.
-     *
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toJson();
     }
@@ -433,11 +419,11 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * Works with nested arrays and data objects
      *
-     * @param string $key       dot-notation representation of keys
+     * @param string|null $key  dot-notation representation of keys, null to return self
      * @param mixed  $default   default value to return if nothing found, may be a callback
      * @return mixed
      */
-    public function getNested($key, $default = null)
+    public function getNested(?string $key, $default = null)
     {
         if (null === $key) {
             return $this;
@@ -472,7 +458,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     //      Iterator
     // ------------------------------------------------------------------------------
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->attributes);
     }

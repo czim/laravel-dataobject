@@ -1,4 +1,5 @@
 <?php
+
 namespace Czim\DataObject;
 
 use Czim\DataObject\Contracts\DataObjectInterface;
@@ -14,7 +15,13 @@ use UnexpectedValueException;
  */
 class CastableDataObject extends AbstractDataObject
 {
-    const SCALAR_CASTS = ['boolean', 'integer', 'float', 'string', 'array'];
+    const SCALAR_CASTS = [
+        'boolean',
+        'integer',
+        'float',
+        'string',
+        'array',
+    ];
 
     /**
      * If true, returns an empty dataobject instance for unset or null values.
@@ -44,7 +51,7 @@ class CastableDataObject extends AbstractDataObject
      *
      * @return array    associative
      */
-    protected function casts()
+    protected function casts(): array
     {
         return [];
     }
@@ -56,19 +63,14 @@ class CastableDataObject extends AbstractDataObject
      * @param string $key
      * @return mixed|DataObjectInterface
      */
-    public function &getAttributeValue($key)
+    public function &getAttributeValue(string $key)
     {
         $this->applyCast($key);
 
         return parent::getAttributeValue($key);
     }
 
-    /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $this->applyCasts(true);
 
@@ -82,7 +84,7 @@ class CastableDataObject extends AbstractDataObject
      *
      * @param bool $scalarOnly
      */
-    protected function applyCasts($scalarOnly = false)
+    protected function applyCasts(bool $scalarOnly = false): void
     {
         // @codeCoverageIgnoreStart
         if ( ! $scalarOnly) {
@@ -111,7 +113,7 @@ class CastableDataObject extends AbstractDataObject
      *
      * @param string $key
      */
-    protected function applyCast($key)
+    protected function applyCast(string $key): void
     {
         $casts = $this->casts();
 
@@ -191,13 +193,14 @@ class CastableDataObject extends AbstractDataObject
      * @param string $class
      * @param mixed  $data
      * @param string $key
-     * @return mixed
+     * @return DataObjectInterface
      */
-    protected function makeNestedDataObject($class, $data, $key)
+    protected function makeNestedDataObject(string $class, $data, $key): DataObjectInterface
     {
         $data = ($data instanceof Arrayable) ? $data->toArray() : $data;
 
         if ( ! is_array($data)) {
+
             throw new UnexpectedValueException(
                 "Cannot instantiate data object '{$class}' with non-array data for key '{$key}'"
                 . (is_scalar($data) || is_object($data) && method_exists($data, '__toString')
@@ -214,7 +217,7 @@ class CastableDataObject extends AbstractDataObject
      * @param mixed $value
      * @return bool
      */
-    protected function castValueAsBoolean($value)
+    protected function castValueAsBoolean($value): bool
     {
         return (bool) $value;
     }
@@ -223,25 +226,25 @@ class CastableDataObject extends AbstractDataObject
      * @param mixed $value
      * @return int
      */
-    protected function castValueAsInteger($value)
+    protected function castValueAsInteger($value): int
     {
         return (int) $value;
     }
 
     /**
      * @param mixed $value
-     * @return int
+     * @return float
      */
-    protected function castValueAsFloat($value)
+    protected function castValueAsFloat($value): float
     {
         return (float) $value;
     }
 
     /**
      * @param mixed $value
-     * @return int
+     * @return string
      */
-    protected function castValueAsString($value)
+    protected function castValueAsString($value): string
     {
         return (string) $value;
     }
@@ -250,7 +253,7 @@ class CastableDataObject extends AbstractDataObject
      * @param mixed $value
      * @return array
      */
-    protected function castValueAsArray($value)
+    protected function castValueAsArray($value): array
     {
         if (is_array($value)) {
             return $value;

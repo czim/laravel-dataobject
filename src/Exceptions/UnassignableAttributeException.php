@@ -1,6 +1,9 @@
 <?php
+
 namespace Czim\DataObject\Exceptions;
 
-class UnassignableAttributeException extends \InvalidArgumentException
+use InvalidArgumentException;
+
+class UnassignableAttributeException extends InvalidArgumentException
 {
 }

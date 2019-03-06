@@ -1,4 +1,5 @@
 <?php
+
 namespace Czim\DataObject\Contracts;
 
 use ArrayAccess;
@@ -9,63 +10,64 @@ use Serializable;
 
 interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, IteratorAggregate, Serializable, ValidatableInterface
 {
+
     /**
      * Get attribute
      *
      * @param string $key
      * @return mixed
      */
-    public function getAttribute($key);
+    public function getAttribute(string $key);
 
     /**
      * Get all of the current attributes on the model.
      *
      * @return array
      */
-    public function getAttributes();
+    public function getAttributes(): array;
 
     /**
      * Get attribute
      *
      * @param string $key
      * @param mixed  $value
-     * @return $this
+     * @return $this|DataObjectInterface
      */
-    public function setAttribute($key, $value);
+    public function setAttribute(string $key, $value): DataObjectInterface;
 
     /**
      * Mass assignment of attributes
      *
      * @param array $attributes associative
      */
-    public function setAttributes(array $attributes);
+    public function setAttributes(array $attributes): void;
 
     /**
      * Set the array of model attributes. No checking is done.
      *
      * @param array $attributes
      */
-    public function setRawAttributes(array $attributes);
+    public function setRawAttributes(array $attributes): void;
 
     /**
      * @param bool $recursive
      * @return object
      */
-    public function toObject($recursive = true);
+    public function toObject(bool $recursive = true);
 
     /**
      * Returns list of key names for the (top level) attributes
      *
-     * @return array
+     * @return string[]
      */
-    public function getKeys();
+    public function getKeys(): array;
 
     /**
      * Clears all attributes
      *
-     * @return $this
+     * @return $this|DataObjectInterface
      */
-    public function clear();
+    public function clear(): DataObjectInterface;
 
     /**
      * Returns nested content by dot notation, similar to Laravel's Arr::get()
@@ -74,6 +76,6 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
      * @param mixed  $default   default value to return if nothing found, may be a callback
      * @return mixed
      */
-    public function getNested($key, $default = null);
+    public function getNested(string $key, $default = null);
 
 }
