@@ -20,10 +20,11 @@ Also provided are the means to make nested validation possible for data objects 
 
  Laravel      | Package 
 :-------------|:--------
- 5.1.x        | 1.0.x
- 5.2.x        | 1.0.x
- 5.3.x        | 1.3.x
- 5.4.x and up | 1.4.x
+ 5.1          | 1.0
+ 5.2          | 1.0
+ 5.3          | 1.3
+ 5.4          | 1.4
+ 5.5 and up   | 1.4, 2.0
 
 
 ## Install
