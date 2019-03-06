@@ -1,4 +1,5 @@
 <?php
+
 namespace Czim\DataObject\Test;
 
 use Czim\DataObject\Test\Helpers\TestDataObject;
@@ -10,12 +11,12 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_an_attribute_as_a_boolean()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
-        $this->assertSame(false, $data->bool);
+        static::assertSame(false, $data->bool);
 
         $data->bool = 'boolean value';
-        $this->assertSame(true, $data->bool);
+        static::assertSame(true, $data->bool);
     }
 
     /**
@@ -23,15 +24,15 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_an_attribute_as_an_integer()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
-        $this->assertSame(0, $data->int);
+        static::assertSame(0, $data->int);
 
         $data->int = 'integer value';
-        $this->assertSame(0, $data->int);
+        static::assertSame(0, $data->int);
 
         $data->int = 40.0;
-        $this->assertSame(40, $data->int);
+        static::assertSame(40, $data->int);
     }
 
     /**
@@ -39,15 +40,15 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_an_attribute_as_a_float()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
-        $this->assertSame(0.0, $data->float);
+        static::assertSame(0.0, $data->float);
 
         $data->float = 'float value';
-        $this->assertSame(0.0, $data->float);
+        static::assertSame(0.0, $data->float);
 
         $data->float = 40;
-        $this->assertSame(40.0, $data->float);
+        static::assertSame(40.0, $data->float);
     }
 
     /**
@@ -55,15 +56,15 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_an_attribute_as_a_string()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
-        $this->assertSame('', $data->string);
+        static::assertSame('', $data->string);
 
         $data->string = 'string value';
-        $this->assertSame('string value', $data->string);
+        static::assertSame('string value', $data->string);
 
         $data->string = 40;
-        $this->assertSame('40', $data->string);
+        static::assertSame('40', $data->string);
     }
 
     /**
@@ -71,18 +72,18 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_an_attribute_as_an_array()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
-        $this->assertSame([], $data->array);
+        static::assertSame([], $data->array);
 
         $data->array = ['array'];
-        $this->assertSame(['array'], $data->array);
+        static::assertSame(['array'], $data->array);
 
         $data->array = 'string value';
-        $this->assertSame(['string value'], $data->array);
+        static::assertSame(['string value'], $data->array);
 
         $data->array = new TestDataObject(['test' => 'type']);
-        $this->assertSame(['test' => 'type'], $data->array);
+        static::assertSame(['test' => 'type'], $data->array);
     }
 
     /**
@@ -90,7 +91,7 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_an_attribute_as_a_data_object()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
         $data->object = [
             'test' => 'testing',
@@ -98,8 +99,8 @@ class CastableDataObjectTest extends TestCase
 
         $object = $data->object;
 
-        $this->assertInstanceOf(TestDataObject::class, $object);
-        $this->assertEquals('testing', $object->test);
+        static::assertInstanceOf(TestDataObject::class, $object);
+        static::assertEquals('testing', $object->test);
     }
 
     /**
@@ -107,9 +108,9 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_an_attribute_as_a_list_of_data_objects()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
-        $this->assertEquals([], $data->objects);
+        static::assertEquals([], $data->objects);
 
         $data->objects = [
             ['test' => 'testing a'],
@@ -118,12 +119,12 @@ class CastableDataObjectTest extends TestCase
 
         $objects = $data->objects;
 
-        $this->assertInternalType('array', $objects);
-        $this->assertCount(2, $objects);
-        $this->assertInstanceOf(TestDataObject::class, $objects[0]);
-        $this->assertInstanceOf(TestDataObject::class, $objects[1]);
-        $this->assertEquals('testing a', $objects[0]->test);
-        $this->assertEquals('testing b', $objects[1]->test);
+        static::assertIsArray($objects);
+        static::assertCount(2, $objects);
+        static::assertInstanceOf(TestDataObject::class, $objects[0]);
+        static::assertInstanceOf(TestDataObject::class, $objects[1]);
+        static::assertEquals('testing a', $objects[0]->test);
+        static::assertEquals('testing b', $objects[1]->test);
     }
 
     /**
@@ -132,7 +133,7 @@ class CastableDataObjectTest extends TestCase
      */
     function it_throws_an_exception_if_it_cannot_cast_to_an_object()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
         $data->object = 'not an array';
 
@@ -145,7 +146,7 @@ class CastableDataObjectTest extends TestCase
      */
     function it_throws_an_exception_if_it_cannot_cast_to_an_object_in_a_list()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
         $data->objects = [ ['type' => 'an array'], 444];
 
@@ -157,9 +158,9 @@ class CastableDataObjectTest extends TestCase
      */
     function it_returns_null_for_an_unset_attribute_cast_as_an_object()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
-        $this->assertNull($data->object);
+        static::assertNull($data->object);
     }
 
     /**
@@ -167,9 +168,9 @@ class CastableDataObjectTest extends TestCase
      */
     function it_returns_empty_objects_for_an_unset_attribute_cast_as_an_object_if_configured_to()
     {
-        $data = new Helpers\TestCastDataObjectCastNull();
+        $data = new Helpers\TestCastDataObjectCastNull;
 
-        $this->assertInstanceOf(TestDataObject::class, $data->object);
+        static::assertInstanceOf(TestDataObject::class, $data->object);
     }
 
     /**
@@ -177,7 +178,7 @@ class CastableDataObjectTest extends TestCase
      */
     function it_returns_null_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
         $data->objects = [
             null,
@@ -187,13 +188,13 @@ class CastableDataObjectTest extends TestCase
 
         $objects = $data->objects;
 
-        $this->assertInternalType('array', $objects);
-        $this->assertCount(3, $objects);
-        $this->assertNull($objects[0]);
-        $this->assertNull($objects[2]);
+        static::assertIsArray($objects);
+        static::assertCount(3, $objects);
+        static::assertNull($objects[0]);
+        static::assertNull($objects[2]);
 
-        $this->assertInstanceOf(TestDataObject::class, $objects[1]);
-        $this->assertEquals('test', $objects[1]->type);
+        static::assertInstanceOf(TestDataObject::class, $objects[1]);
+        static::assertEquals('test', $objects[1]->type);
     }
 
     /**
@@ -201,7 +202,7 @@ class CastableDataObjectTest extends TestCase
      */
     function it_returns_empty_object_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects_if_configured_to()
     {
-        $data = new Helpers\TestCastDataObjectCastNull();
+        $data = new Helpers\TestCastDataObjectCastNull;
 
         $data->objects = [
             null,
@@ -210,13 +211,13 @@ class CastableDataObjectTest extends TestCase
 
         $objects = $data->objects;
 
-        $this->assertInternalType('array', $objects);
-        $this->assertCount(2, $objects);
+        static::assertIsArray($objects);
+        static::assertCount(2, $objects);
 
-        $this->assertInstanceOf(TestDataObject::class, $objects[0]);
-        $this->assertNull($objects[0]->type);
-        $this->assertInstanceOf(TestDataObject::class, $objects[1]);
-        $this->assertEquals('test', $objects[1]->type);
+        static::assertInstanceOf(TestDataObject::class, $objects[0]);
+        static::assertNull($objects[0]->type);
+        static::assertInstanceOf(TestDataObject::class, $objects[1]);
+        static::assertEquals('test', $objects[1]->type);
     }
 
     /**
@@ -224,7 +225,7 @@ class CastableDataObjectTest extends TestCase
      */
     function it_casts_attributes_on_toArray()
     {
-        $data = new Helpers\TestCastDataObject();
+        $data = new Helpers\TestCastDataObject;
 
         $data->int     = '6';
         $data->object  = new TestDataObject(['type' => 'object']);
@@ -235,22 +236,22 @@ class CastableDataObjectTest extends TestCase
 
         $array = $data->toArray();
 
-        $this->assertInternalType('array', $array);
-        $this->assertCount(7, $array);
-        $this->assertArrayHasKey('int', $array);
-        $this->assertSame(6, $array['int']);
-        $this->assertArrayHasKey('object', $array);
-        $this->assertEquals(['type' => 'object'], $array['object']);
-        $this->assertArrayHasKey('objects', $array);
-        $this->assertEquals([['test' => 'testing a'], ['test' => 'testing b']], $array['objects']);
-        $this->assertArrayHasKey('bool', $array);
-        $this->assertSame(false, $array['bool']);
-        $this->assertArrayHasKey('float', $array);
-        $this->assertSame(0.0, $array['float']);
-        $this->assertArrayHasKey('string', $array);
-        $this->assertSame('', $array['string']);
-        $this->assertArrayHasKey('array', $array);
-        $this->assertSame([], $array['array']);
+        static::assertIsArray($array);
+        static::assertCount(7, $array);
+        static::assertArrayHasKey('int', $array);
+        static::assertSame(6, $array['int']);
+        static::assertArrayHasKey('object', $array);
+        static::assertEquals(['type' => 'object'], $array['object']);
+        static::assertArrayHasKey('objects', $array);
+        static::assertEquals([['test' => 'testing a'], ['test' => 'testing b']], $array['objects']);
+        static::assertArrayHasKey('bool', $array);
+        static::assertSame(false, $array['bool']);
+        static::assertArrayHasKey('float', $array);
+        static::assertSame(0.0, $array['float']);
+        static::assertArrayHasKey('string', $array);
+        static::assertSame('', $array['string']);
+        static::assertArrayHasKey('array', $array);
+        static::assertSame([], $array['array']);
     }
 
     // ------------------------------------------------------------------------------
@@ -262,18 +263,18 @@ class CastableDataObjectTest extends TestCase
      */
     function it_works_normally_without_casts_set()
     {
-        $data = new Helpers\TestCastDataObjectWithoutCasts();
+        $data = new Helpers\TestCastDataObjectWithoutCasts;
 
         $data->object = ['test' => 'testing'];
         $data->float = 'not a float';
 
-        $this->assertSame(['test' => 'testing'], $data->object);
-        $this->assertSame('not a float', $data['float']);
+        static::assertSame(['test' => 'testing'], $data->object);
+        static::assertSame('not a float', $data['float']);
 
         $array = $data->toArray();
-        $this->assertCount(2, $array);
-        $this->assertSame(['test' => 'testing'], $array['object']);
-        $this->assertSame('not a float', $array['float']);
+        static::assertCount(2, $array);
+        static::assertSame(['test' => 'testing'], $array['object']);
+        static::assertSame('not a float', $array['float']);
     }
 
 }

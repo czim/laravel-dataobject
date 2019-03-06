@@ -1,20 +1,22 @@
 <?php
+
 namespace Czim\DataObject\Test;
 
 use Illuminate\Contracts\Support\MessageBag;
 
 class DataObjectTest extends TestCase
 {
+
     /**
      * @test
      */
     function it_returns_null_for_unassigned_attributes()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
-        $this->assertNull($data->getAttribute('unset_key'), 'unassigned attribute was not null (getAttribute)');
-        $this->assertNull($data->unset_attribute, 'unassigned attribute was not null (magic)');
-        $this->assertNull($data['unset_array_key'], 'unassigned attribute was not null (array access)');
+        static::assertNull($data->getAttribute('unset_key'), 'unassigned attribute was not null (getAttribute)');
+        static::assertNull($data->unset_attribute, 'unassigned attribute was not null (magic)');
+        static::assertNull($data['unset_array_key'], 'unassigned attribute was not null (array access)');
     }
 
     /**
@@ -23,19 +25,19 @@ class DataObjectTest extends TestCase
     function it_stores_and_retrieves_attributes_individually()
     {
         // method assignment
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
         $data->setAttribute('name', 'some test value');
-        $this->assertEquals('some test value', $data->getAttribute('name'), 'method assignment failed');
+        static::assertEquals('some test value', $data->getAttribute('name'), 'method assignment failed');
 
         // magic assignment
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
         $data->name = 'some test value';
-        $this->assertEquals('some test value', $data->name, 'magic assignment failed');
+        static::assertEquals('some test value', $data->name, 'magic assignment failed');
 
         // array access
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
         $data['name'] = 'some test value';
-        $this->assertEquals('some test value', $data['name'], 'array assignment failed');
+        static::assertEquals('some test value', $data['name'], 'array assignment failed');
     }
 
     /**
@@ -43,14 +45,14 @@ class DataObjectTest extends TestCase
      */
     function it_handles_array_updates_by_reference()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
         $data->setAttribute('array', [ 'testing 0' ]);
 
         $data->array[] = 'testing 1';
         $data->array[] = 'testing 2';
 
-        $this->assertCount(3, $data->getAttribute('array'), 'array push failed, wrong count');
+        static::assertCount(3, $data->getAttribute('array'), 'array push failed, wrong count');
     }
     
     /**
@@ -58,15 +60,15 @@ class DataObjectTest extends TestCase
      */
     function it_mass_stores_and_retrieves_attributes()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
         $data->setAttributes([
             'mass'       => 'testing',
             'assignment' => 2242,
         ]);
 
-        $this->assertEquals('testing', $data->mass, 'mass assignment failed (1)');
-        $this->assertEquals(2242, $data->assignment, 'mass assignment failed (2)');
+        static::assertEquals('testing', $data->mass, 'mass assignment failed (1)');
+        static::assertEquals(2242, $data->assignment, 'mass assignment failed (2)');
     }
 
     /**
@@ -79,8 +81,8 @@ class DataObjectTest extends TestCase
             'assignment' => 2242,
         ]);
 
-        $this->assertEquals('testing', $data->mass, 'constructor assignment failed (1)');
-        $this->assertEquals(2242, $data->assignment, 'constructor assignment failed (2)');
+        static::assertEquals('testing', $data->mass, 'constructor assignment failed (1)');
+        static::assertEquals(2242, $data->assignment, 'constructor assignment failed (2)');
     }
 
     /**
@@ -88,15 +90,15 @@ class DataObjectTest extends TestCase
      */
     function it_validates_attributes()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
         // validate empty data against single required rule
-        $this->assertFalse($data->validate(), 'empty should not pass validation');
+        static::assertFalse($data->validate(), 'empty should not pass validation');
 
         $messages = $data->messages();
-        $this->assertInstanceOf(MessageBag::class, $messages, 'validation messages not of correct type');
-        $this->assertCount(1, $messages, 'validation messages should have 1 message');
-        $this->assertRegExp(
+        static::assertInstanceOf(MessageBag::class, $messages, 'validation messages not of correct type');
+        static::assertCount(1, $messages, 'validation messages should have 1 message');
+        static::assertRegExp(
             '#name .*is required#i',
             $messages->first(),
             'validation message not as expected for empty data'
@@ -106,11 +108,11 @@ class DataObjectTest extends TestCase
         $data->name = 'Valid name';
         $data->list = 'not an array';
 
-        $this->assertFalse($data->validate(), 'incorrect data should not pass validation');
+        static::assertFalse($data->validate(), 'incorrect data should not pass validation');
 
         $messages = $data->messages();
-        $this->assertCount(1, $messages, 'validation messages should have 1 message');
-        $this->assertRegexp(
+        static::assertCount(1, $messages, 'validation messages should have 1 message');
+        static::assertRegexp(
             '#list .*must be an array#i',
             $messages->first(),
             'validation message not as expected for incorrect data'
@@ -120,7 +122,7 @@ class DataObjectTest extends TestCase
         $data->name = 'Valid name';
         $data->list = [ 'one' => 'present' ];
 
-        $this->assertTrue($data->validate(), 'Correct data should pass validation');
+        static::assertTrue($data->validate(), 'Correct data should pass validation');
     }
 
     /**
@@ -128,13 +130,13 @@ class DataObjectTest extends TestCase
      */
     function it_returns_keys_for_set_attributes()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
         $data->key_set     = true;
         $data->another_key = 'okay';
         $data['last_key']  = 60;
 
-        $this->assertEquals(['key_set', 'another_key', 'last_key'], $data->getKeys());
+        static::assertEquals(['key_set', 'another_key', 'last_key'], $data->getKeys());
     }
 
     /**
@@ -142,15 +144,15 @@ class DataObjectTest extends TestCase
      */
     function it_clears_all_attributes()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
         $data->key_set     = true;
         $data->another_key = 'okay';
 
         $data->clear();
 
-        $this->assertNull($data->key_set);
-        $this->assertNull($data['another_key']);
+        static::assertNull($data->key_set);
+        static::assertNull($data['another_key']);
     }
     
     /**
@@ -158,13 +160,13 @@ class DataObjectTest extends TestCase
      */
     function it_performs_isset()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
-        $this->assertFalse(isset($data->key_name));
+        static::assertFalse(isset($data->key_name));
 
         $data->key_name = 'test';
 
-        $this->assertTrue(isset($data->key_name));
+        static::assertTrue(isset($data->key_name));
     }
     
     /**
@@ -172,19 +174,19 @@ class DataObjectTest extends TestCase
      */
     function it_performs_unset()
     {
-        $data = new Helpers\TestDataObject();
+        $data = new Helpers\TestDataObject;
 
         $data->key_name = 'test';
 
         unset($data->key_name);
 
-        $this->assertFalse(isset($data->key_name));
+        static::assertFalse(isset($data->key_name));
 
         $data->key_name = 'test';
 
         unset($data['key_name']);
 
-        $this->assertFalse(isset($data->key_name));
+        static::assertFalse(isset($data->key_name));
     }
 
 
@@ -199,7 +201,7 @@ class DataObjectTest extends TestCase
      */
     function it_throws_an_exception_when_assigning_to_disallowed_keys()
     {
-        $data = new Helpers\TestRestrictedDataObject();
+        $data = new Helpers\TestRestrictedDataObject;
 
         // allow normal assignment that is listed in $assignable
         $data->name = 'pietje';
@@ -221,7 +223,7 @@ class DataObjectTest extends TestCase
      */
     function it_throws_an_exception_when_assigning_to_disallowed_keys_for_mass_assignment()
     {
-        $data = new Helpers\TestRestrictedDataObject();
+        $data = new Helpers\TestRestrictedDataObject;
 
         $data->setAttributes([
             'does_not_exist' => 'exception',
@@ -233,10 +235,10 @@ class DataObjectTest extends TestCase
      */
     function it_allows_setting_attributes_through_method_if_disallowing_assignment_by_magic()
     {
-        $data = new Helpers\TestMagiclessDataObject();
+        $data = new Helpers\TestMagiclessDataObject;
 
         $data->setAttribute('name', 'okay');
-        $this->assertEquals('okay', $data->name, 'Should still allow normal assignment');
+        static::assertEquals('okay', $data->name, 'Should still allow normal assignment');
     }
 
     /**
@@ -246,7 +248,7 @@ class DataObjectTest extends TestCase
      */
     function it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely()
     {
-        $data = new Helpers\TestMagiclessDataObject();
+        $data = new Helpers\TestMagiclessDataObject;
 
         $data->magic_blows_up = 'fails';
     }
@@ -259,7 +261,7 @@ class DataObjectTest extends TestCase
      */
     function it_throws_an_exception_when_assigning_by_array_access_if_disallowing_magic()
     {
-        $data = new Helpers\TestMagiclessDataObject();
+        $data = new Helpers\TestMagiclessDataObject;
 
         $data['array_access'] = 'fails as well';
     }
@@ -281,15 +283,12 @@ class DataObjectTest extends TestCase
 
         $array = $data->toArray();
 
-        $this->assertInternalType('array', $array, 'toArray() did not return array');
-        $this->assertCount(2, $array, 'incorrect item count');
-        $this->assertArraySubset(
-            [
-                'mass'       => 'testing',
-                'assignment' => 2242,
-            ],
-            $array, 'incorrect array contents'
-        );
+        static::assertIsArray($array, 'toArray() did not return array');
+        static::assertCount(2, $array, 'incorrect item count');
+        static::assertArrayHasKey('mass', $array);
+        static::assertArrayHasKey('assignment', $array);
+        static::assertEquals('testing', $array['mass']);
+        static::assertEquals(2242, $array['assignment']);
     }
 
     /**
@@ -302,7 +301,7 @@ class DataObjectTest extends TestCase
             'assignment' => 2242,
         ]);
 
-        $this->assertEquals('{"mass":"testing","assignment":2242}', $data->toJson(), 'incorrect toJson result');
+        static::assertEquals('{"mass":"testing","assignment":2242}', $data->toJson(), 'incorrect toJson result');
     }
 
     /**
@@ -315,7 +314,7 @@ class DataObjectTest extends TestCase
             'assignment' => 2242,
         ]);
 
-        $this->assertEquals('{"mass":"testing","assignment":2242}', json_encode($data->jsonSerialize()), 'incorrect toJson result');
+        static::assertEquals('{"mass":"testing","assignment":2242}', json_encode($data->jsonSerialize()), 'incorrect toJson result');
     }
 
     /**
@@ -330,7 +329,7 @@ class DataObjectTest extends TestCase
 
         $json = (string) $data;
 
-        $this->assertEquals('{"mass":"testing","assignment":2242}', $json, 'incorrect stringified result');
+        static::assertEquals('{"mass":"testing","assignment":2242}', $json, 'incorrect stringified result');
     }
 
     /**
@@ -345,10 +344,10 @@ class DataObjectTest extends TestCase
 
         $object = $data->toObject();
 
-        $this->assertTrue(is_object($object), "not an object");
-        $this->assertEquals(2242, $object->assignment, 'incorrect direct property');
-        $this->assertTrue(is_object($object->mass), "nested array not an object");
-        $this->assertEquals(true, $object->mass->test, 'incorrect nested property (mass)');
+        static::assertTrue(is_object($object), "not an object");
+        static::assertEquals(2242, $object->assignment, 'incorrect direct property');
+        static::assertTrue(is_object($object->mass), "nested array not an object");
+        static::assertEquals(true, $object->mass->test, 'incorrect nested property (mass)');
 
 
         // Non-recursive
@@ -358,8 +357,8 @@ class DataObjectTest extends TestCase
 
         $object = $data->toObject(false);
 
-        $this->assertTrue(is_object($object), "not an object");
-        $this->assertEquals(['test' => true], $object->mass);
+        static::assertTrue(is_object($object), "not an object");
+        static::assertEquals(['test' => true], $object->mass);
     }
 
     /**
@@ -373,8 +372,8 @@ class DataObjectTest extends TestCase
             'three' => [ 'help', 'me', 'im', 'trapped', 'in', 'a', 'test', 'factory' ],
         ]);
 
-        $this->assertEquals(3, $data->count());
-        $this->assertCount(3, $data);
+        static::assertEquals(3, $data->count());
+        static::assertCount(3, $data);
     }
 
     /**
@@ -394,20 +393,16 @@ class DataObjectTest extends TestCase
 
         $array = $data->toArray();
 
-        $this->assertInternalType('array', $array, 'nested toArray() did not return array');
-        $this->assertCount(2, $array, 'incorrect item count');
-        $this->assertArraySubset(
-            [
-                'contents' => [
-                    'mass'       => 'testing',
-                    'assignment' => 2242,
-                ],
-                'more' => [
-                    [ 'a' => 'b' ],
-                ],
-            ],
-            $array, 'incorrect nested array contents'
-        );
+        static::assertIsArray($array, 'nested toArray() did not return array');
+        static::assertCount(2, $array, 'incorrect item count');
+
+        static::assertArrayHasKey('contents', $array);
+        static::assertArrayHasKey('more', $array);
+        static::assertArrayHasKey('mass', $array['contents']);
+        static::assertArrayHasKey('assignment', $array['contents']);
+        static::assertEquals('testing', $array['contents']['mass']);
+        static::assertEquals(2242, $array['contents']['assignment']);
+        static::assertEquals([['a' => 'b']], $array['more']);
     }
 
 
@@ -433,14 +428,14 @@ class DataObjectTest extends TestCase
         ]);
 
         // If the method gets called with a null value, the object itself is returned
-        $this->assertSame($data, $data->getNested(null));
+        static::assertSame($data, $data->getNested(null));
 
-        $this->assertEquals('test', $data->getNested('top'), 'Incorrect value for top level attribute');
-        $this->assertEquals('nested', $data->getNested('array.normal'), 'Incorrect value for nested array');
-        $this->assertEquals('testing', $data->getNested('contents.mass'), 'Incorrect value for recursive nested DataObject');
-        $this->assertEquals('b', $data->getNested('more.0.a'), 'Incorrect value for recursive nested DataObject in array');
+        static::assertEquals('test', $data->getNested('top'), 'Incorrect value for top level attribute');
+        static::assertEquals('nested', $data->getNested('array.normal'), 'Incorrect value for nested array');
+        static::assertEquals('testing', $data->getNested('contents.mass'), 'Incorrect value for recursive nested DataObject');
+        static::assertEquals('b', $data->getNested('more.0.a'), 'Incorrect value for recursive nested DataObject in array');
 
-        $this->assertEquals('DEF', $data->getNested('more.1.4.3.hop', 'DEF'), 'Expecting default for wrong key');
+        static::assertEquals('DEF', $data->getNested('more.1.4.3.hop', 'DEF'), 'Expecting default for wrong key');
     }
 
     /**
@@ -452,8 +447,8 @@ class DataObjectTest extends TestCase
 
         $iterator = $data->getIterator();
 
-        $this->assertInstanceOf(\ArrayIterator::class, $iterator);
-        $this->assertCount(2, $iterator);
+        static::assertInstanceOf(\ArrayIterator::class, $iterator);
+        static::assertCount(2, $iterator);
     }
 
 }

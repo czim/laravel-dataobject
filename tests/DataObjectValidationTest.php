@@ -1,4 +1,5 @@
 <?php
+
 namespace Czim\DataObject\Test;
 
 use Czim\DataObject\DataObjectServiceProvider;
@@ -26,28 +27,28 @@ class DataObjectValidationTest extends TestCase
      */
     function it_validates_nested_data_objects_for_required_nested_invalid_data()
     {
-        $data = new TestNestedDataObject();
+        $data = new TestNestedDataObject;
 
-        $this->assertFalse($data->validate(), "validation should fail for empty");
+        static::assertFalse($data->validate(), "validation should fail for empty");
 
         $nestedData = new TestDataObject([ 'irrelevant' => 'nothing' ]);
 
-        $this->assertFalse($nestedData->validate(), "validation should fail for empty nested (on its own)");
+        static::assertFalse($nestedData->validate(), "validation should fail for empty nested (on its own)");
 
         $data->nested = $nestedData;
 
-        $this->assertFalse($data->validate(), "validation should fail for empty nested (when nested)");
+        static::assertFalse($data->validate(), "validation should fail for empty nested (when nested)");
 
         // the messages should indicate that the name field is missing from the nested object
         $messages = $data->messages();
 
-        $this->assertCount(2, $messages, "should be two messages in the bag (1 for nested, 1 for nested content");
-        $this->assertRegExp(
+        static::assertCount(2, $messages, "should be two messages in the bag (1 for nested, 1 for nested content");
+        static::assertRegExp(
             '#name .*required#i',
             $messages->get('nested.name')[0],
             'Incorrect or missing message for nested name'
         );
-        $this->assertEquals(
+        static::assertEquals(
             'validation.dataobject',
             $messages->get('nested')[0],
             'Incorrect or missing message for nested main'
@@ -62,10 +63,10 @@ class DataObjectValidationTest extends TestCase
      */
     function it_validates_nested_data_objects_for_required_nested_valid_data()
     {
-        $data         = new TestNestedDataObject();
+        $data         = new TestNestedDataObject;
         $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
 
-        $this->assertTrue($data->validate(), "validation should pass for valid nested data");
+        static::assertTrue($data->validate(), "validation should pass for valid nested data");
     }
 
     /**
@@ -74,12 +75,12 @@ class DataObjectValidationTest extends TestCase
      */
     function it_it_validates_nested_data_objects_for_optional_invalid_data()
     {
-        $data = new TestNestedDataObject();
+        $data = new TestNestedDataObject;
         $data->nested = [ 'name' => 'no problem' ];
         $data->more   = new TestDataObject([ 'irrelevant' => 'nothing' ]);
 
-        $this->assertFalse($data->validate(), "validation should fail for invalid optional nested data");
-        $this->assertRegExp('#name .*required#i', $data->messages()->get('more.name')[0]);
+        static::assertFalse($data->validate(), "validation should fail for invalid optional nested data");
+        static::assertRegExp('#name .*required#i', $data->messages()->get('more.name')[0]);
     }
 
     /**
@@ -88,16 +89,16 @@ class DataObjectValidationTest extends TestCase
      */
     function it_it_validates_nested_data_objects_for_optional_valid_data()
     {
-        $data = new TestNestedDataObject();
+        $data = new TestNestedDataObject;
         $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
 
         // should pass when more is empty
-        $this->assertTrue($data->validate(), "validation should pass for omitted optional nested data");
+        static::assertTrue($data->validate(), "validation should pass for omitted optional nested data");
 
         $data->more = ['name' => 'also fine'];
 
         // should also pass when more is valid
-        $this->assertTrue($data->validate(), "validation should pass for valid optional nested data");
+        static::assertTrue($data->validate(), "validation should pass for valid optional nested data");
     }
 
     /**
@@ -105,11 +106,11 @@ class DataObjectValidationTest extends TestCase
      */
     function it_fails_validation_if_value_for_nested_dataobject_rule_could_not_be_interpreted()
     {
-        $data = new TestNestedDataObject();
+        $data = new TestNestedDataObject;
         $data->nested = 'not a dataobject, or even an array';
 
-        $this->assertFalse($data->validate(), "validation should fail for uninterpretable dataobject value");
-        $this->assertRegExp(
+        static::assertFalse($data->validate(), "validation should fail for uninterpretable dataobject value");
+        static::assertRegExp(
             '#not .*interpret.* as testdataobject#i',
             $data->messages()->first(),
             "incorrect validation message for uninterpretable dataobject value"
@@ -123,7 +124,7 @@ class DataObjectValidationTest extends TestCase
      */
     function it_throws_an_exception_if_a_dataobject_validation_rule_does_not_reference_a_data_object()
     {
-        $data = new TestBrokenNestedDataObject();
+        $data = new TestBrokenNestedDataObject;
 
         $data->nested = [ 'nothing' => 'to', 'see' => 'here' ];
 
@@ -149,18 +150,14 @@ class DataObjectValidationTest extends TestCase
 
         $array = $data->toArray();
 
-        $this->assertInternalType('array', $array, 'toArray() did not return array');
-        $this->assertCount(2, $array, 'incorrect item count');
-        $this->assertArraySubset(
-            [ 'random' => 'extra' ],
-            $array, 'incorrect nested array contents'
-        );
+        static::assertIsArray($array, 'toArray() did not return array');
+        static::assertCount(2, $array, 'incorrect item count');
+        static::assertArrayHasKey('random', $array);
+        static::assertEquals('extra', $array['random']);
 
-        $this->assertInternalType('array', $array['nested'], 'toArray() nested object was not an array');
-        $this->assertArraySubset(
-            [ 'name' => 'beautiful name', ],
-            $array['nested'], 'incorrect nested array contents'
-        );
+        static::assertIsArray($array['nested'], 'toArray() nested object was not an array');
+        static::assertArrayHasKey('name', $array['nested']);
+        static::assertEquals('beautiful name', $array['nested']['name']);
     }
 
     /**
@@ -175,7 +172,7 @@ class DataObjectValidationTest extends TestCase
             'random' => 'extra',
         ]);
 
-        $this->assertEquals(
+        static::assertEquals(
             '{"nested":{"name":"beautiful name"},"random":"extra"}',
             $data->toJson(),
             'incorrect nested toJson result'

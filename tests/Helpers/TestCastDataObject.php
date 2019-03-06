@@ -1,4 +1,5 @@
 <?php
+
 namespace Czim\DataObject\Test\Helpers;
 
 use Czim\DataObject\CastableDataObject;
@@ -11,7 +12,7 @@ class TestCastDataObject extends CastableDataObject
      *
      * @return array    associative
      */
-    protected function casts()
+    protected function casts(): array
     {
         return [
             'bool'    => 'boolean',
