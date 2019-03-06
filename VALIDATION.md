@@ -1,5 +1,17 @@
 ### Validate Nested DataObjects
 
+
+## Version 2.0 and upward
+
+Note: The old `Czim\DataObject\Validation\Traits\ValidateAsDataObjectTrait` has been removed in version 2.0.0.
+
+A custom validator class has been added: `Czim\DataObject\Validation\CustomValidation`.
+
+This uses simple extended validation rules and may be reused if you want.
+
+
+## Version 1.4 and below
+
 `Czim\DataObject\Validation\Traits\ValidateAsDataObjectTrait`
 
 Allows the use of the `dataobject` validation rule to have nested data object validation.
@@ -55,7 +67,11 @@ $data = new \YourNameSpace\FirstDataObject([
 ]))->validate();
 ```
 
+## Version 1.0 and older
+
 ### Validate Arrays
+
+Note: this trait was made redundant by Laravel 5.2's new validation rule support for nested arrays. 
 
 `Czim\DataObject\Validation\Traits\ValidateArraysTrait`
 
