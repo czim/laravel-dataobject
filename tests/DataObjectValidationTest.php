@@ -1,4 +1,6 @@
 <?php
+/** @noinspection ReturnTypeCanBeDeclaredInspection */
+/** @noinspection AccessModifierPresentedInspection */
 
 namespace Czim\DataObject\Test;
 
@@ -6,6 +8,7 @@ use Czim\DataObject\DataObjectServiceProvider;
 use Czim\DataObject\Test\Helpers\TestBrokenNestedDataObject;
 use Czim\DataObject\Test\Helpers\TestDataObject;
 use Czim\DataObject\Test\Helpers\TestNestedDataObject;
+use InvalidArgumentException;
 
 class DataObjectValidationTest extends TestCase
 {
@@ -27,28 +30,28 @@ class DataObjectValidationTest extends TestCase
      */
     function it_validates_nested_data_objects_for_required_nested_invalid_data()
     {
-        $data = new TestNestedDataObject;
+        $data = new TestNestedDataObject();
 
-        static::assertFalse($data->validate(), "validation should fail for empty");
+        $this->assertFalse($data->validate(), 'validation should fail for empty');
 
         $nestedData = new TestDataObject([ 'irrelevant' => 'nothing' ]);
 
-        static::assertFalse($nestedData->validate(), "validation should fail for empty nested (on its own)");
+        $this->assertFalse($nestedData->validate(), 'validation should fail for empty nested (on its own)');
 
         $data->nested = $nestedData;
 
-        static::assertFalse($data->validate(), "validation should fail for empty nested (when nested)");
+        $this->assertFalse($data->validate(), 'validation should fail for empty nested (when nested)');
 
         // the messages should indicate that the name field is missing from the nested object
         $messages = $data->messages();
 
-        static::assertCount(2, $messages, "should be two messages in the bag (1 for nested, 1 for nested content");
-        static::assertRegExp(
+        $this->assertCount(2, $messages, 'should be two messages in the bag (1 for nested, 1 for nested content');
+        $this->assertRegExp(
             '#name .*required#i',
             $messages->get('nested.name')[0],
             'Incorrect or missing message for nested name'
         );
-        static::assertEquals(
+        $this->assertEquals(
             'validation.dataobject',
             $messages->get('nested')[0],
             'Incorrect or missing message for nested main'
@@ -63,10 +66,10 @@ class DataObjectValidationTest extends TestCase
      */
     function it_validates_nested_data_objects_for_required_nested_valid_data()
     {
-        $data         = new TestNestedDataObject;
+        $data         = new TestNestedDataObject();
         $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
 
-        static::assertTrue($data->validate(), "validation should pass for valid nested data");
+        $this->assertTrue($data->validate(), 'validation should pass for valid nested data');
     }
 
     /**
@@ -75,12 +78,12 @@ class DataObjectValidationTest extends TestCase
      */
     function it_it_validates_nested_data_objects_for_optional_invalid_data()
     {
-        $data = new TestNestedDataObject;
+        $data = new TestNestedDataObject();
         $data->nested = [ 'name' => 'no problem' ];
         $data->more   = new TestDataObject([ 'irrelevant' => 'nothing' ]);
 
-        static::assertFalse($data->validate(), "validation should fail for invalid optional nested data");
-        static::assertRegExp('#name .*required#i', $data->messages()->get('more.name')[0]);
+        $this->assertFalse($data->validate(), 'validation should fail for invalid optional nested data');
+        $this->assertRegExp('#name .*required#i', $data->messages()->get('more.name')[0]);
     }
 
     /**
@@ -89,16 +92,16 @@ class DataObjectValidationTest extends TestCase
      */
     function it_it_validates_nested_data_objects_for_optional_valid_data()
     {
-        $data = new TestNestedDataObject;
+        $data = new TestNestedDataObject();
         $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
 
         // should pass when more is empty
-        static::assertTrue($data->validate(), "validation should pass for omitted optional nested data");
+        $this->assertTrue($data->validate(), 'validation should pass for omitted optional nested data');
 
         $data->more = ['name' => 'also fine'];
 
         // should also pass when more is valid
-        static::assertTrue($data->validate(), "validation should pass for valid optional nested data");
+        $this->assertTrue($data->validate(), 'validation should pass for valid optional nested data');
     }
 
     /**
@@ -106,25 +109,26 @@ class DataObjectValidationTest extends TestCase
      */
     function it_fails_validation_if_value_for_nested_dataobject_rule_could_not_be_interpreted()
     {
-        $data = new TestNestedDataObject;
+        $data = new TestNestedDataObject();
         $data->nested = 'not a dataobject, or even an array';
 
-        static::assertFalse($data->validate(), "validation should fail for uninterpretable dataobject value");
-        static::assertRegExp(
+        $this->assertFalse($data->validate(), 'validation should fail for uninterpretable dataobject value');
+        $this->assertRegExp(
             '#not .*interpret.* as testdataobject#i',
             $data->messages()->first(),
-            "incorrect validation message for uninterpretable dataobject value"
+            'incorrect validation message for uninterpretable dataobject value'
         );
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp # not .*validatable dataobject#i
      */
     function it_throws_an_exception_if_a_dataobject_validation_rule_does_not_reference_a_data_object()
     {
-        $data = new TestBrokenNestedDataObject;
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('# not .*validatable dataobject#i');
+
+        $data = new TestBrokenNestedDataObject();
 
         $data->nested = [ 'nothing' => 'to', 'see' => 'here' ];
 

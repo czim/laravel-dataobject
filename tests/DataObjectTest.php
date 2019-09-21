@@ -1,18 +1,21 @@
 <?php
+/** @noinspection ReturnTypeCanBeDeclaredInspection */
+/** @noinspection AccessModifierPresentedInspection */
 
 namespace Czim\DataObject\Test;
 
+use ArrayIterator;
+use Czim\DataObject\Exceptions\UnassignableAttributeException;
 use Illuminate\Contracts\Support\MessageBag;
 
 class DataObjectTest extends TestCase
 {
-
     /**
      * @test
      */
     function it_returns_null_for_unassigned_attributes()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         static::assertNull($data->getAttribute('unset_key'), 'unassigned attribute was not null (getAttribute)');
         static::assertNull($data->unset_attribute, 'unassigned attribute was not null (magic)');
@@ -25,17 +28,17 @@ class DataObjectTest extends TestCase
     function it_stores_and_retrieves_attributes_individually()
     {
         // method assignment
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
         $data->setAttribute('name', 'some test value');
         static::assertEquals('some test value', $data->getAttribute('name'), 'method assignment failed');
 
         // magic assignment
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
         $data->name = 'some test value';
         static::assertEquals('some test value', $data->name, 'magic assignment failed');
 
         // array access
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
         $data['name'] = 'some test value';
         static::assertEquals('some test value', $data['name'], 'array assignment failed');
     }
@@ -45,7 +48,7 @@ class DataObjectTest extends TestCase
      */
     function it_handles_array_updates_by_reference()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         $data->setAttribute('array', [ 'testing 0' ]);
 
@@ -54,13 +57,13 @@ class DataObjectTest extends TestCase
 
         static::assertCount(3, $data->getAttribute('array'), 'array push failed, wrong count');
     }
-    
+
     /**
      * @test
      */
     function it_mass_stores_and_retrieves_attributes()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         $data->setAttributes([
             'mass'       => 'testing',
@@ -90,7 +93,7 @@ class DataObjectTest extends TestCase
      */
     function it_validates_attributes()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         // validate empty data against single required rule
         static::assertFalse($data->validate(), 'empty should not pass validation');
@@ -130,7 +133,7 @@ class DataObjectTest extends TestCase
      */
     function it_returns_keys_for_set_attributes()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         $data->key_set     = true;
         $data->another_key = 'okay';
@@ -144,7 +147,7 @@ class DataObjectTest extends TestCase
      */
     function it_clears_all_attributes()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         $data->key_set     = true;
         $data->another_key = 'okay';
@@ -154,13 +157,13 @@ class DataObjectTest extends TestCase
         static::assertNull($data->key_set);
         static::assertNull($data['another_key']);
     }
-    
+
     /**
      * @test
      */
     function it_performs_isset()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         static::assertFalse(isset($data->key_name));
 
@@ -168,13 +171,13 @@ class DataObjectTest extends TestCase
 
         static::assertTrue(isset($data->key_name));
     }
-    
+
     /**
      * @test
      */
     function it_performs_unset()
     {
-        $data = new Helpers\TestDataObject;
+        $data = new Helpers\TestDataObject();
 
         $data->key_name = 'test';
 
@@ -196,12 +199,13 @@ class DataObjectTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Czim\DataObject\Exceptions\UnassignableAttributeException
-     * @expectedExceptionMessageRegExp #not allowed .*does_not_exist#i
      */
     function it_throws_an_exception_when_assigning_to_disallowed_keys()
     {
-        $data = new Helpers\TestRestrictedDataObject;
+        $this->expectException(UnassignableAttributeException::class);
+        $this->expectExceptionMessageRegExp('#not allowed .*does_not_exist#i');
+
+        $data = new Helpers\TestRestrictedDataObject();
 
         // allow normal assignment that is listed in $assignable
         $data->name = 'pietje';
@@ -218,12 +222,13 @@ class DataObjectTest extends TestCase
     /**
      * @test
      * @depends it_throws_an_exception_when_assigning_to_disallowed_keys
-     * @expectedException \Czim\DataObject\Exceptions\UnassignableAttributeException
-     * @expectedExceptionMessageRegExp #not allowed .*does_not_exist#i
      */
     function it_throws_an_exception_when_assigning_to_disallowed_keys_for_mass_assignment()
     {
-        $data = new Helpers\TestRestrictedDataObject;
+        $this->expectException(UnassignableAttributeException::class);
+        $this->expectExceptionMessageRegExp('#not allowed .*does_not_exist#i');
+
+        $data = new Helpers\TestRestrictedDataObject();
 
         $data->setAttributes([
             'does_not_exist' => 'exception',
@@ -235,7 +240,7 @@ class DataObjectTest extends TestCase
      */
     function it_allows_setting_attributes_through_method_if_disallowing_assignment_by_magic()
     {
-        $data = new Helpers\TestMagiclessDataObject;
+        $data = new Helpers\TestMagiclessDataObject();
 
         $data->setAttribute('name', 'okay');
         static::assertEquals('okay', $data->name, 'Should still allow normal assignment');
@@ -243,12 +248,13 @@ class DataObjectTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Czim\DataObject\Exceptions\UnassignableAttributeException
-     * @expectedExceptionMessageRegExp #not allowed .*magic#i
      */
     function it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely()
     {
-        $data = new Helpers\TestMagiclessDataObject;
+        $this->expectException(UnassignableAttributeException::class);
+        $this->expectExceptionMessageRegExp('#not allowed .*magic#i');
+
+        $data = new Helpers\TestMagiclessDataObject();
 
         $data->magic_blows_up = 'fails';
     }
@@ -256,12 +262,13 @@ class DataObjectTest extends TestCase
     /**
      * @test
      * @depends it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely
-     * @expectedException \Czim\DataObject\Exceptions\UnassignableAttributeException
-     * @expectedExceptionMessageRegExp #not allowed .*magic#i
      */
     function it_throws_an_exception_when_assigning_by_array_access_if_disallowing_magic()
     {
-        $data = new Helpers\TestMagiclessDataObject;
+        $this->expectException(UnassignableAttributeException::class);
+        $this->expectExceptionMessageRegExp('#not allowed .*magic#i');
+
+        $data = new Helpers\TestMagiclessDataObject();
 
         $data['array_access'] = 'fails as well';
     }
@@ -344,9 +351,9 @@ class DataObjectTest extends TestCase
 
         $object = $data->toObject();
 
-        static::assertTrue(is_object($object), "not an object");
+        static::assertIsObject($object, 'not an object');
         static::assertEquals(2242, $object->assignment, 'incorrect direct property');
-        static::assertTrue(is_object($object->mass), "nested array not an object");
+        static::assertIsObject($object->mass, 'nested array not an object');
         static::assertEquals(true, $object->mass->test, 'incorrect nested property (mass)');
 
 
@@ -357,7 +364,7 @@ class DataObjectTest extends TestCase
 
         $object = $data->toObject(false);
 
-        static::assertTrue(is_object($object), "not an object");
+        static::assertIsObject($object, 'not an object');
         static::assertEquals(['test' => true], $object->mass);
     }
 
@@ -447,7 +454,7 @@ class DataObjectTest extends TestCase
 
         $iterator = $data->getIterator();
 
-        static::assertInstanceOf(\ArrayIterator::class, $iterator);
+        static::assertInstanceOf(ArrayIterator::class, $iterator);
         static::assertCount(2, $iterator);
     }
 
