@@ -458,10 +458,12 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     //      Iterator
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return ArrayIterator<string, mixed>
+     */
     public function getIterator(): Iterator
     {
         return new ArrayIterator($this->attributes);
     }
-
 }
 
