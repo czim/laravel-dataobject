@@ -8,11 +8,13 @@ use Illuminate\Contracts\Support\Arrayable;
 use IteratorAggregate;
 use Serializable;
 
+/**
+ * @extends IteratorAggregate<string,mixed>
+ */
 interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, IteratorAggregate, Serializable, ValidatableInterface
 {
-
     /**
-     * Get attribute
+     * Get attribute.
      *
      * @param string $key
      * @return mixed
@@ -38,14 +40,14 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
     /**
      * Mass assignment of attributes
      *
-     * @param array $attributes associative
+     * @param mixed[] $attributes associative
      */
     public function setAttributes(array $attributes): void;
 
     /**
      * Set the array of model attributes. No checking is done.
      *
-     * @param array $attributes
+     * @param mixed[] $attributes
      */
     public function setRawAttributes(array $attributes): void;
 
@@ -77,5 +79,4 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
      * @return mixed
      */
     public function getNested(string $key, $default = null);
-
 }
