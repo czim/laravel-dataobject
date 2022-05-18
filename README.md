@@ -18,14 +18,13 @@ Also provided are the means to make nested validation possible for data objects 
 
 ## Version Compatibility
 
- Laravel      | Package 
-:-------------|:--------
- 5.1          | 1.0
- 5.2          | 1.0
- 5.3          | 1.3
- 5.4          | 1.4
- 5.5 and up   | 1.4, 2.0
-
+| Laravel    | Package  |
+|:-----------|:---------|
+| 5.1        | 1.0      |
+| 5.2        | 1.0      |
+| 5.3        | 1.3      |
+| 5.4        | 1.4      |
+| 5.5 and up | 1.4, 2.0 |
 
 ## Install
 
@@ -37,7 +36,7 @@ $ composer require czim/laravel-dataobject
 
 ## Usage
 
-Simply create your own extension of the base dataobject, and: 
+Simply create your own extension of the base dataobject, and:
 
 
 ### Optionally add your own getters and setters
@@ -51,7 +50,7 @@ class TestDataObject extends \Czim\DataObject\AbstractDataObject
     {
         $this->getAttribute('name');
     }
-    
+
     public function setName($value)
     {
         $this->setAttribute('name', $value);
@@ -60,19 +59,19 @@ class TestDataObject extends \Czim\DataObject\AbstractDataObject
 ```
 
 Additionally, if you want to block any type of magic assignment (meaning all assignment would have to be done through the `setAttribute()` or `setAttributes()` methods, or your own setters), you can disable magic assignment as follows:
- 
+
 ```php
 class TestDataObject extends \Czim\DataObject\AbstractDataObject
 {
     protected $magicAssignment = false;
-    
+
     ...
 ```
 
 Attempts to set attributes on the DataObject by magic or array access will then throw an `UnassignableAttributeException`.
 
 
-### Optionally add validation rules for attributes 
+### Optionally add validation rules for attributes
 
 ```php
 class YourDataObject extends \Czim\DataObject\AbstractDataObject
@@ -88,12 +87,12 @@ Validating the data can be done as follows:
 
 ```php
     $dataObject = new YourDataObject();
-    
+
     // validate() returns a boolean, false if it does not follow the rules
     if ( ! $dataObject->validate()) {
-        
+
         $messages = $dataObject->messages();
-        
+
         // messages() returns a standard Laravel MessageBag
         dd( $messages->first() );
     }
@@ -120,7 +119,7 @@ Read more information about [the validation (traits) here](VALIDATION.md).
 
 ## Castable Data Object
 
-You may opt to extend the `Czim\DataObject\CastableDataObject`. 
+You may opt to extend the `Czim\DataObject\CastableDataObject`.
 Besides the standard features, this also includes the possibility of casting its properties to scalar values or (nested) data objects. This works similarly to Eloquent's `$casts` property (with some minor differences).
 
 By overriding a protected `casts()` method, it is possible to set a cast type per attribute key:
@@ -133,8 +132,8 @@ protected function casts()
         'check' => 'boolean',
         'count' => 'integer',
         'price' => 'float',
-    ];    
-}       
+    ];
+}
 ```
 
 This has the effect of casting each property to its set type before returning it.
@@ -153,11 +152,11 @@ $object->count;     // 0 (instead of null)
 
 ### toArray Casting
 
-Cast types are also applied for the `toArray()` method of the data object. 
+Cast types are also applied for the `toArray()` method of the data object.
 This means that unset properties will be present in the array as their default value (`false` for boolean, `0.0` for float, etc.).
 
 To disable this behaviour, set `$castToArray` to `false`.
-This will entirely disable casting values on `toArray()`. 
+This will entirely disable casting values on `toArray()`.
 
 
 ### Nested Object Casting
@@ -175,8 +174,8 @@ class RootDataObject extends \Czim\DataObject\CastableDataObject
         return [
             'some_object' => YourDataObject::class,
             'object_list' => YourDataObject::class . '[]',
-        ];    
-    }       
+        ];
+    }
 }
 ```
 
