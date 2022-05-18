@@ -46,7 +46,7 @@ class DataObjectValidationTest extends TestCase
         $messages = $data->messages();
 
         static::assertCount(2, $messages, 'should be two messages in the bag (1 for nested, 1 for nested content');
-        static::assertRegExp(
+        static::assertMatchesRegularExpression(
             '#name .*required#i',
             $messages->get('nested.name')[0],
             'Incorrect or missing message for nested name'
@@ -83,7 +83,7 @@ class DataObjectValidationTest extends TestCase
         $data->more   = new TestDataObject([ 'irrelevant' => 'nothing' ]);
 
         static::assertFalse($data->validate(), 'validation should fail for invalid optional nested data');
-        static::assertRegExp('#name .*required#i', $data->messages()->get('more.name')[0]);
+        static::assertMatchesRegularExpression('#name .*required#i', $data->messages()->get('more.name')[0]);
     }
 
     /**
@@ -113,7 +113,7 @@ class DataObjectValidationTest extends TestCase
         $data->nested = 'not a dataobject, or even an array';
 
         static::assertFalse($data->validate(), 'validation should fail for uninterpretable dataobject value');
-        static::assertRegExp(
+        static::assertMatchesRegularExpression(
             '#not .*interpret.* as testdataobject#i',
             $data->messages()->first(),
             'incorrect validation message for uninterpretable dataobject value'
@@ -126,7 +126,7 @@ class DataObjectValidationTest extends TestCase
     function it_throws_an_exception_if_a_dataobject_validation_rule_does_not_reference_a_data_object()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('# not .*validatable dataobject#i');
+        $this->expectExceptionMessageMatches('# not .*validatable dataobject#i');
 
         $data = new TestBrokenNestedDataObject();
 

@@ -101,7 +101,7 @@ class DataObjectTest extends TestCase
         $messages = $data->messages();
         static::assertInstanceOf(MessageBag::class, $messages, 'validation messages not of correct type');
         static::assertCount(1, $messages, 'validation messages should have 1 message');
-        static::assertRegExp(
+        static::assertMatchesRegularExpression(
             '#name .*is required#i',
             $messages->first(),
             'validation message not as expected for empty data'
@@ -115,7 +115,7 @@ class DataObjectTest extends TestCase
 
         $messages = $data->messages();
         static::assertCount(1, $messages, 'validation messages should have 1 message');
-        static::assertRegexp(
+        static::assertMatchesRegularExpression(
             '#list .*must be an array#i',
             $messages->first(),
             'validation message not as expected for incorrect data'
@@ -203,7 +203,7 @@ class DataObjectTest extends TestCase
     function it_throws_an_exception_when_assigning_to_disallowed_keys()
     {
         $this->expectException(UnassignableAttributeException::class);
-        $this->expectExceptionMessageRegExp('#not allowed .*does_not_exist#i');
+        $this->expectExceptionMessageMatches('#not allowed .*does_not_exist#i');
 
         $data = new Helpers\TestRestrictedDataObject();
 
@@ -226,7 +226,7 @@ class DataObjectTest extends TestCase
     function it_throws_an_exception_when_assigning_to_disallowed_keys_for_mass_assignment()
     {
         $this->expectException(UnassignableAttributeException::class);
-        $this->expectExceptionMessageRegExp('#not allowed .*does_not_exist#i');
+        $this->expectExceptionMessageMatches('#not allowed .*does_not_exist#i');
 
         $data = new Helpers\TestRestrictedDataObject();
 
@@ -252,7 +252,7 @@ class DataObjectTest extends TestCase
     function it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely()
     {
         $this->expectException(UnassignableAttributeException::class);
-        $this->expectExceptionMessageRegExp('#not allowed .*magic#i');
+        $this->expectExceptionMessageMatches('#not allowed .*magic#i');
 
         $data = new Helpers\TestMagiclessDataObject();
 
@@ -266,7 +266,7 @@ class DataObjectTest extends TestCase
     function it_throws_an_exception_when_assigning_by_array_access_if_disallowing_magic()
     {
         $this->expectException(UnassignableAttributeException::class);
-        $this->expectExceptionMessageRegExp('#not allowed .*magic#i');
+        $this->expectExceptionMessageMatches('#not allowed .*magic#i');
 
         $data = new Helpers\TestMagiclessDataObject();
 
