@@ -18,13 +18,14 @@ Also provided are the means to make nested validation possible for data objects 
 
 ## Version Compatibility
 
-| Laravel    | Package  |
-|:-----------|:---------|
-| 5.1        | 1.0      |
-| 5.2        | 1.0      |
-| 5.3        | 1.3      |
-| 5.4        | 1.4      |
-| 5.5 and up | 1.4, 2.0 |
+| Laravel    | Package  | PHP                     |
+|:-----------|:---------|:------------------------|
+| 5.1        | 1.0      |                         |
+| 5.2        | 1.0      |                         |
+| 5.3        | 1.3      |                         |
+| 5.4        | 1.4      |                         |
+| 5.5 and up | 1.4, 2.0 |                         |
+| 9 and up   | 3.0      | 8.0 and up              |
 
 ## Install
 
