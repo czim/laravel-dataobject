@@ -6,11 +6,8 @@ use Czim\DataObject\CastableDataObject;
 
 class TestCastDataObject extends CastableDataObject
 {
-
     /**
-     * Returns cast types per attribute key.
-     *
-     * @return array    associative
+     * @return array<string, string>
      */
     protected function casts(): array
     {
@@ -24,5 +21,4 @@ class TestCastDataObject extends CastableDataObject
             'objects' => TestDataObject::class . '[]',
         ];
     }
-
 }

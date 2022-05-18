@@ -6,10 +6,8 @@ use Czim\DataObject\AbstractDataObject;
 
 class TestNestedDataObject extends AbstractDataObject
 {
-
-    protected $rules = [
+    protected array $rules = [
         'nested' => 'required|dataobject:Czim\\DataObject\\Test\\Helpers\\TestDataObject',
         'more'   => 'dataobject:Czim\\DataObject\\Test\\Helpers\\TestDataObject',
     ];
-
 }

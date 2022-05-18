@@ -6,10 +6,8 @@ use Czim\DataObject\AbstractDataObject;
 
 class TestDataObject extends AbstractDataObject
 {
-
-    protected $rules = [
+    protected array $rules = [
         'name' => 'required|string',
         'list' => 'array|min:1',
     ];
-
 }

@@ -14,35 +14,37 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
 {
     use ValidatableTrait;
 
-
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * The validation rules to apply to the attributes
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $rules = [];
+    protected array $rules = [];
 
     /**
      * List of keys that limit for which keys values may be assigned
      * If empty, allows any key to be assigned.
      *
-     * @var array|null
+     * @var string[]|null
      */
-    protected $assignable;
+    protected ?array $assignable = null;
 
     /**
      * Whether to allow magic assignment of properties
      *
      * @var bool
      */
-    protected $magicAssignment = true;
+    protected bool $magicAssignment = true;
 
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public function __construct(array $attributes = [])
     {
         $this->setAttributes($attributes);
@@ -62,7 +64,6 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         }
 
         if (is_array($attribute)) {
-
             foreach ($attribute as $singleAttribute) {
                 $this->checkAttributeAssignable($singleAttribute);
             }
@@ -70,7 +71,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
             return;
         }
 
-        if ( ! in_array($attribute, $this->assignable)) {
+        if (! in_array($attribute, $this->assignable)) {
             throw new UnassignableAttributeException("Not allowed to assign value for '{$attribute}'");
         }
     }
@@ -79,24 +80,12 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     //      Simple Getting/Setting
     // ------------------------------------------------------------------------------
 
-    /**
-     * Get attribute
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function &getAttribute(string $key)
+    public function &getAttribute(string $key): mixed
     {
         return $this->getAttributeValue($key);
     }
 
-    /**
-     * Get a plain attribute
-     *
-     * @param string $key
-     * @return mixed
-     */
-    protected function &getAttributeValue(string $key)
+    protected function &getAttributeValue(string $key): mixed
     {
         if (isset($this->attributes[$key])) {
 
@@ -109,9 +98,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     }
 
     /**
-     * Get all of the current attributes on the model.
+     * Get all currently set attributes on the model.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAttributes(): array
     {
@@ -119,11 +108,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     }
 
     /**
-     * Get attribute
-     *
      * @param string $key
      * @param mixed  $value
-     * @return $this|DataObjectInterface
+     * @return $this&DataObjectInterface
      */
     public function setAttribute(string $key, $value): DataObjectInterface
     {
@@ -137,7 +124,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Mass assignment of attributes
      *
-     * @param array $attributes associative
+     * @param array<string, mixed> $attributes
      */
     public function setAttributes(array $attributes): void
     {
@@ -149,7 +136,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Set the array of model attributes. No checking is done.
      *
-     * @param array $attributes
+     * @param array<string, mixed> $attributes
      */
     public function setRawAttributes(array $attributes): void
     {
@@ -169,7 +156,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Clears all attributes
      *
-     * @return $this|DataObjectInterface
+     * @return $this&DataObjectInterface
      */
     public function clear(): DataObjectInterface
     {
@@ -182,26 +169,14 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     //      Magic Getting/Setting
     // ------------------------------------------------------------------------------
 
-    /**
-     * Dynamically retrieve attributes on the model.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function &__get($key)
+    public function &__get(string $key): mixed
     {
         return $this->getAttribute($key);
     }
 
-    /**
-     * Dynamically set attributes on the model.
-     *
-     * @param string $key
-     * @param mixed  $value
-     */
-    public function __set($key, $value): void
+    public function __set(string $key, mixed $value): void
     {
-        if ( ! $this->magicAssignment) {
+        if (! $this->magicAssignment) {
             throw new UnassignableAttributeException("Not allowed to assign value by magic");
         }
 
@@ -210,30 +185,21 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         $this->setAttribute($key, $value);
     }
 
-    /**
-     * Determine if an attribute exists on the model.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function __isset($key)
+    public function __isset(string $key): bool
     {
-        return (isset($this->attributes[$key]) && null !== $this->getAttributeValue($key));
+        return (
+            isset($this->attributes[$key])
+            && $this->getAttributeValue($key) !== null
+        );
     }
 
-    /**
-     * Unset an attribute on the model.
-     *
-     * @param string $key
-     * @return void
-     */
-    public function __unset($key)
+    public function __unset(string $key): void
     {
         unset($this->attributes[$key]);
     }
 
     /**
-     * Counts the attributes (overrides ArrayObject)
+     * Counts the attributes (overrides ArrayObject).
      *
      * @return int
      */
@@ -246,9 +212,12 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     //      Conversion and Array Access
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
-        if ( ! count($this->attributes)) {
+        if (! count($this->attributes)) {
             return [];
         }
 
@@ -256,13 +225,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         $array = [];
 
         foreach ($this->attributes as $key => $attribute) {
-
             if ($attribute instanceof Arrayable) {
-
                 $attribute = $attribute->toArray();
-
             } elseif (is_array($attribute)) {
-
                 $attribute = $this->recursiveToArray($attribute);
             }
 
@@ -278,10 +243,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param mixed $item
      * @return array|string
      */
-    protected function recursiveToArray($item)
+    protected function recursiveToArray(mixed $item): array|string
     {
         if (is_array($item)) {
-
             foreach ($item as &$subitem) {
                 $subitem = $this->recursiveToArray($subitem);
             }
@@ -314,7 +278,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Warning: doesn't work with empty array keys!
      *
-     * @param array $array
+     * @param array<string, mixed> $array
      * @return object
      */
     protected function arrayToObject(array $array)
@@ -343,7 +307,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Convert the object into something JSON serializable.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
@@ -355,41 +319,22 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         return $this->toJson();
     }
 
-    /**
-     * Determine if the given attribute exists.
-     *
-     * @param mixed $offset
-     * @return bool
-     */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->attributes[ $offset ]);
     }
 
-    /**
-     * Get the value for a given offset.
-     *
-     * @param mixed $offset
-     * @return mixed
-     */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         // let it behave like the magic getter, return null if it doesn't exist
-        if ( ! $this->offsetExists($offset)) return null;
+        if (! $this->offsetExists($offset)) return null;
 
         return $this->attributes[ $offset ];
     }
 
-    /**
-     * Set the value for a given offset.
-     *
-     * @param mixed $offset
-     * @param mixed $value
-     * @return void
-     */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        if ( ! $this->magicAssignment) {
+        if (! $this->magicAssignment) {
             throw new UnassignableAttributeException("Not allowed to assign value by magic with array access");
         }
 
@@ -398,13 +343,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         $this->attributes[ $offset ] = $value;
     }
 
-    /**
-     * Unset the value for a given offset.
-     *
-     * @param mixed $offset
-     * @return void
-     */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[ $offset ]);
     }
@@ -423,9 +362,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param mixed  $default   default value to return if nothing found, may be a callback
      * @return mixed
      */
-    public function getNested(?string $key, $default = null)
+    public function getNested(?string $key, mixed $default = null): mixed
     {
-        if (null === $key) {
+        if ($key === null) {
             return $this;
         }
 
@@ -438,12 +377,11 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
 
 
         foreach ($keys as $index => $segment) {
-
             if ($part instanceof DataObjectInterface) {
                 return $part->getNested(implode('.', array_slice($keys, $index)), $default);
             }
 
-            if ( ! is_array($part) || ! array_key_exists($segment, $part)) {
+            if (! is_array($part) || ! array_key_exists($segment, $part)) {
                 return value($default);
             }
 

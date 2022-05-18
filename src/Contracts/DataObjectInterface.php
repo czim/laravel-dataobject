@@ -13,41 +13,31 @@ use Serializable;
  */
 interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, IteratorAggregate, Serializable, ValidatableInterface
 {
-    /**
-     * Get attribute.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function getAttribute(string $key);
+    public function getAttribute(string $key): mixed;
 
     /**
-     * Get all of the current attributes on the model.
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAttributes(): array;
 
     /**
-     * Get attribute
-     *
      * @param string $key
      * @param mixed  $value
-     * @return $this|DataObjectInterface
+     * @return $this&DataObjectInterface
      */
-    public function setAttribute(string $key, $value): DataObjectInterface;
+    public function setAttribute(string $key, mixed $value): DataObjectInterface;
 
     /**
-     * Mass assignment of attributes
+     * Mass assignment of attributes.
      *
-     * @param mixed[] $attributes associative
+     * @param array<string, mixed> $attributes
      */
     public function setAttributes(array $attributes): void;
 
     /**
      * Set the array of model attributes. No checking is done.
      *
-     * @param mixed[] $attributes
+     * @param array<string, mixed> $attributes
      */
     public function setRawAttributes(array $attributes): void;
 
@@ -58,16 +48,14 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
     public function toObject(bool $recursive = true);
 
     /**
-     * Returns list of key names for the (top level) attributes
+     * Returns list of key names for the (top level) attributes.
      *
      * @return string[]
      */
     public function getKeys(): array;
 
     /**
-     * Clears all attributes
-     *
-     * @return $this|DataObjectInterface
+     * @return $this&DataObjectInterface
      */
     public function clear(): DataObjectInterface;
 
@@ -78,5 +66,5 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
      * @param mixed  $default   default value to return if nothing found, may be a callback
      * @return mixed
      */
-    public function getNested(string $key, $default = null);
+    public function getNested(string $key, mixed $default = null): mixed;
 }

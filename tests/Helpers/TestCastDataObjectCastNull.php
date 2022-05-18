@@ -6,16 +6,10 @@ use Czim\DataObject\CastableDataObject;
 
 class TestCastDataObjectCastNull extends CastableDataObject
 {
+    protected bool $castUnsetObjects = true;
 
     /**
-     * @var bool
-     */
-    protected $castUnsetObjects = true;
-
-    /**
-     * Returns cast types per attribute key.
-     *
-     * @return array    associative
+     * @return array<string, string>
      */
     protected function casts(): array
     {
@@ -24,5 +18,4 @@ class TestCastDataObjectCastNull extends CastableDataObject
             'objects' => TestDataObject::class . '[]',
         ];
     }
-
 }

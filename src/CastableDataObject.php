@@ -7,15 +7,13 @@ use Illuminate\Contracts\Support\Arrayable;
 use UnexpectedValueException;
 
 /**
- * Class CastableDataObject
- *
  * Extended data object with the possibility to add casts, similar
  * to Eloquent models. Also allows 'casting' to another data object,
  * which provides lazy-loading data object trees.
  */
 class CastableDataObject extends AbstractDataObject
 {
-    const SCALAR_CASTS = [
+    protected const SCALAR_CASTS = [
         'boolean',
         'integer',
         'float',
@@ -28,14 +26,14 @@ class CastableDataObject extends AbstractDataObject
      *
      * @var bool
      */
-    protected $castUnsetObjects = false;
+    protected bool $castUnsetObjects = false;
 
     /**
      * If true, performs casts on toArray.
      *
      * @var bool
      */
-    protected $castToArray = true;
+    protected bool $castToArray = true;
 
     /**
      * Returns cast types per attribute key.
@@ -49,7 +47,7 @@ class CastableDataObject extends AbstractDataObject
      *  'some_object'  => YourDataObject::class,
      *  'some_objects' => YourDataObject::class . '[]',
      *
-     * @return array    associative
+     * @return array<string, string>
      */
     protected function casts(): array
     {
@@ -63,13 +61,16 @@ class CastableDataObject extends AbstractDataObject
      * @param string $key
      * @return mixed|DataObjectInterface
      */
-    public function &getAttributeValue(string $key)
+    public function &getAttributeValue(string $key): mixed
     {
         $this->applyCast($key);
 
         return parent::getAttributeValue($key);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         $this->applyCasts(true);
@@ -87,10 +88,8 @@ class CastableDataObject extends AbstractDataObject
     protected function applyCasts(bool $scalarOnly = false): void
     {
         // @codeCoverageIgnoreStart
-        if ( ! $scalarOnly) {
-
+        if (! $scalarOnly) {
             foreach (array_keys($this->casts()) as $key) {
-
                 $this->applyCast($key);
             }
 
@@ -99,8 +98,7 @@ class CastableDataObject extends AbstractDataObject
         // @codeCoverageIgnoreEnd
 
         foreach ($this->casts() as $key => $type) {
-
-            if ( ! in_array($type, static::SCALAR_CASTS)) {
+            if (! in_array($type, static::SCALAR_CASTS)) {
                 continue;
             }
 
@@ -117,11 +115,11 @@ class CastableDataObject extends AbstractDataObject
     {
         $casts = $this->casts();
 
-        if ( ! count($casts) || ! array_key_exists($key, $casts)) {
+        if (! count($casts) || ! array_key_exists($key, $casts)) {
             return;
         }
 
-        if ( ! isset($this->attributes[ $key ])) {
+        if (! isset($this->attributes[ $key ])) {
             $value = null;
         } else {
             $value = $this->attributes[ $key ];
@@ -133,17 +131,17 @@ class CastableDataObject extends AbstractDataObject
             return;
         }
 
-        // Otherwise attempt a data object cast
+        // Otherwise, attempt a data object cast
         $dataObjectClass = $casts[ $key ];
         $dataObjectArray = false;
 
         // If the model is postfixed with [], an array of models is expected
-        if (substr($dataObjectClass, -2) === '[]') {
+        if (str_ends_with($dataObjectClass, '[]')) {
             $dataObjectClass = substr($dataObjectClass, 0, -2);
             $dataObjectArray = true;
         }
 
-        if (null === $value) {
+        if ($value === null) {
             if ($dataObjectArray) {
                 $this->attributes[ $key ] = [];
                 return;
@@ -156,17 +154,13 @@ class CastableDataObject extends AbstractDataObject
         }
 
         if ($dataObjectArray) {
-
             if (is_array($this->attributes[ $key ])) {
-
                 foreach ($this->attributes[ $key ] as $index => &$item) {
-
-                    if (null === $item && ! $this->castUnsetObjects) {
+                    if ($item === null && ! $this->castUnsetObjects) {
                         continue;
                     }
 
-                    if ( ! ($item instanceof $dataObjectClass)) {
-
+                    if (! ($item instanceof $dataObjectClass)) {
                         $item = $this->makeNestedDataObject($dataObjectClass, $item ?: [], $key . '.' . $index);
                     }
                 }
@@ -178,7 +172,7 @@ class CastableDataObject extends AbstractDataObject
         }
 
         // Single data object
-        if ( ! ($this->attributes[ $key ] instanceof $dataObjectClass)) {
+        if (! ($this->attributes[ $key ] instanceof $dataObjectClass)) {
             $this->attributes[ $key ] = $this->makeNestedDataObject(
                 $dataObjectClass,
                 $this->attributes[ $key ],
@@ -195,17 +189,17 @@ class CastableDataObject extends AbstractDataObject
      * @param string $key
      * @return DataObjectInterface
      */
-    protected function makeNestedDataObject(string $class, $data, $key): DataObjectInterface
+    protected function makeNestedDataObject(string $class, mixed $data, string $key): DataObjectInterface
     {
         $data = ($data instanceof Arrayable) ? $data->toArray() : $data;
 
-        if ( ! is_array($data)) {
+        if (! is_array($data)) {
 
             throw new UnexpectedValueException(
                 "Cannot instantiate data object '{$class}' with non-array data for key '{$key}'"
                 . (is_scalar($data) || is_object($data) && method_exists($data, '__toString')
-                    ?   ' (data: ' . (string) $data . ')'
-                    :   null)
+                    ? ' (data: ' . (string) $data . ')'
+                    : null)
             );
         }
 
@@ -213,47 +207,27 @@ class CastableDataObject extends AbstractDataObject
         return new $class($data);
     }
 
-    /**
-     * @param mixed $value
-     * @return bool
-     */
-    protected function castValueAsBoolean($value): bool
+    protected function castValueAsBoolean(mixed $value): bool
     {
         return (bool) $value;
     }
 
-    /**
-     * @param mixed $value
-     * @return int
-     */
-    protected function castValueAsInteger($value): int
+    protected function castValueAsInteger(mixed $value): int
     {
         return (int) $value;
     }
 
-    /**
-     * @param mixed $value
-     * @return float
-     */
-    protected function castValueAsFloat($value): float
+    protected function castValueAsFloat(mixed $value): float
     {
         return (float) $value;
     }
 
-    /**
-     * @param mixed $value
-     * @return string
-     */
-    protected function castValueAsString($value): string
+    protected function castValueAsString(mixed $value): string
     {
         return (string) $value;
     }
 
-    /**
-     * @param mixed $value
-     * @return array
-     */
-    protected function castValueAsArray($value): array
+    protected function castValueAsArray(mixed $value): array
     {
         if (is_array($value)) {
             return $value;
@@ -265,5 +239,4 @@ class CastableDataObject extends AbstractDataObject
 
         return (array) $value;
     }
-
 }

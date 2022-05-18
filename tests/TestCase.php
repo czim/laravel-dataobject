@@ -2,6 +2,8 @@
 
 namespace Czim\DataObject\Test;
 
-abstract class TestCase extends \Orchestra\Testbench\TestCase
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
+
+abstract class TestCase extends OrchestraTestCase
 {
 }

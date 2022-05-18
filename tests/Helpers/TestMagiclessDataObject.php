@@ -4,5 +4,5 @@ namespace Czim\DataObject\Test\Helpers;
 
 class TestMagiclessDataObject extends TestDataObject
 {
-    protected $magicAssignment = false;
+    protected bool $magicAssignment = false;
 }

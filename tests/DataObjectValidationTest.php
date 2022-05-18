@@ -12,7 +12,6 @@ use InvalidArgumentException;
 
 class DataObjectValidationTest extends TestCase
 {
-
     protected function getPackageProviders($app)
     {
         return [

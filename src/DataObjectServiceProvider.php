@@ -8,13 +8,12 @@ use Validator;
 
 class DataObjectServiceProvider extends ServiceProvider
 {
-
-    public function boot()
+    public function boot(): void
     {
         $this->registerDataobjectRule();
     }
 
-    public function register()
+    public function register(): void
     {
     }
 
@@ -22,16 +21,13 @@ class DataObjectServiceProvider extends ServiceProvider
     protected function registerDataobjectRule(): void
     {
         Validator::extend('dataobject', function ($attribute, $value, $parameters, $validator) {
-
             return (new CustomValidation())
                 ->validateDataObject($attribute, $value, $parameters, $validator);
         });
 
         Validator::replacer('dataobject', function ($message, $attribute, $rule, $parameters) {
-
             return (new CustomValidation)
                 ->replaceDataObject($message, $attribute, $rule, $parameters);
         });
     }
-
 }
