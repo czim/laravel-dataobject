@@ -241,9 +241,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * Recursively converts parameter to array
      *
      * @param mixed $item
-     * @return array|string
+     * @return array|string|null
      */
-    protected function recursiveToArray(mixed $item): array|string
+    protected function recursiveToArray(mixed $item): mixed
     {
         if (is_array($item)) {
             foreach ($item as &$subitem) {
