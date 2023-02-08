@@ -67,4 +67,14 @@ interface DataObjectInterface extends Arrayable, ArrayAccess, Countable, Iterato
      * @return mixed
      */
     public function getNested(string $key, mixed $default = null): mixed;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function __serialize(): array;
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function __unserialize(array $data): void;
 }

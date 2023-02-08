@@ -5,6 +5,7 @@
 namespace Czim\DataObject\Test;
 
 use ArrayIterator;
+use Czim\DataObject\Contracts\DataObjectInterface;
 use Czim\DataObject\Exceptions\UnassignableAttributeException;
 use Illuminate\Contracts\Support\MessageBag;
 
@@ -322,6 +323,25 @@ class DataObjectTest extends TestCase
         ]);
 
         static::assertEquals('{"mass":"testing","assignment":2242}', json_encode($data->jsonSerialize()), 'incorrect toJson result');
+    }
+
+    /**
+     * @test
+     */
+    function it_is_serializable()
+    {
+        $data = new Helpers\TestDataObject([
+            'mass'       => 'testing',
+            'assignment' => 2242,
+        ]);
+
+        $serialized = serialize($data);
+
+        /** @var DataObjectInterface $freshData */
+        $freshData = unserialize($serialized);
+
+        static::assertSame('testing', $freshData->getAttribute('mass'));
+        static::assertSame(2242, $freshData->getAttribute('assignment'));
     }
 
     /**
