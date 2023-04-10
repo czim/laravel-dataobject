@@ -12,7 +12,7 @@
     "authors": [
         {
             "name": "Coen Zimmerman",
-            "email": "coen@pxlwidgets.com",
+            "email": "opensource@czim.nl",
             "homepage": "https://github.com/czim",
             "role": "Developer"
         }
@@ -21,8 +21,8 @@
         "php": "^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0",
-        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^10.0",
+        "orchestra/testbench": "^8.0",
         "ext-json": "*"
     },
     "autoload": {
