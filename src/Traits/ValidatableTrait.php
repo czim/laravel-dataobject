@@ -5,7 +5,7 @@ namespace Czim\DataObject\Traits;
 use Illuminate\Contracts\Support\MessageBag as MessageBagContract;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Support\MessageBag;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Allow a class to be validated with validate()
@@ -52,7 +52,7 @@ trait ValidatableTrait
      */
     public function getRules(): array
     {
-        return (isset($this->rules)) ? $this->rules : [];
+        return $this->rules ?? [];
     }
 
     /**

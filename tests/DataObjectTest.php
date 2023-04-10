@@ -1,6 +1,4 @@
 <?php
-/** @noinspection ReturnTypeCanBeDeclaredInspection */
-/** @noinspection AccessModifierPresentedInspection */
 
 namespace Czim\DataObject\Test;
 
@@ -14,7 +12,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_returns_null_for_unassigned_attributes()
+    public function it_returns_null_for_unassigned_attributes(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -26,7 +24,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_stores_and_retrieves_attributes_individually()
+    public function it_stores_and_retrieves_attributes_individually(): void
     {
         // method assignment
         $data = new Helpers\TestDataObject();
@@ -47,7 +45,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_handles_array_updates_by_reference()
+    public function it_handles_array_updates_by_reference(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -62,7 +60,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_mass_stores_and_retrieves_attributes()
+    public function it_mass_stores_and_retrieves_attributes(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -78,7 +76,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_initializes_attributes_through_its_constructor()
+    public function it_initializes_attributes_through_its_constructor(): void
     {
         $data = new Helpers\TestDataObject([
             'mass'       => 'testing',
@@ -92,7 +90,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_validates_attributes()
+    public function it_validates_attributes(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -132,7 +130,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_returns_keys_for_set_attributes()
+    public function it_returns_keys_for_set_attributes(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -146,7 +144,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_clears_all_attributes()
+    public function it_clears_all_attributes(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -162,7 +160,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_performs_isset()
+    public function it_performs_isset(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -176,7 +174,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_performs_unset()
+    public function it_performs_unset(): void
     {
         $data = new Helpers\TestDataObject();
 
@@ -201,7 +199,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_throws_an_exception_when_assigning_to_disallowed_keys()
+    public function it_throws_an_exception_when_assigning_to_disallowed_keys(): void
     {
         $this->expectException(UnassignableAttributeException::class);
         $this->expectExceptionMessageMatches('#not allowed .*does_not_exist#i');
@@ -224,7 +222,7 @@ class DataObjectTest extends TestCase
      * @test
      * @depends it_throws_an_exception_when_assigning_to_disallowed_keys
      */
-    function it_throws_an_exception_when_assigning_to_disallowed_keys_for_mass_assignment()
+    public function it_throws_an_exception_when_assigning_to_disallowed_keys_for_mass_assignment(): void
     {
         $this->expectException(UnassignableAttributeException::class);
         $this->expectExceptionMessageMatches('#not allowed .*does_not_exist#i');
@@ -239,7 +237,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_allows_setting_attributes_through_method_if_disallowing_assignment_by_magic()
+    public function it_allows_setting_attributes_through_method_if_disallowing_assignment_by_magic(): void
     {
         $data = new Helpers\TestMagiclessDataObject();
 
@@ -250,7 +248,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely()
+    public function it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely(): void
     {
         $this->expectException(UnassignableAttributeException::class);
         $this->expectExceptionMessageMatches('#not allowed .*magic#i');
@@ -264,7 +262,7 @@ class DataObjectTest extends TestCase
      * @test
      * @depends it_throws_an_exception_when_assigning_by_magic_if_disallowed_entirely
      */
-    function it_throws_an_exception_when_assigning_by_array_access_if_disallowing_magic()
+    public function it_throws_an_exception_when_assigning_by_array_access_if_disallowing_magic(): void
     {
         $this->expectException(UnassignableAttributeException::class);
         $this->expectExceptionMessageMatches('#not allowed .*magic#i');
@@ -282,7 +280,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_is_arrayable()
+    public function it_is_arrayable(): void
     {
         $data = new Helpers\TestDataObject([
             'mass'       => 'testing',
@@ -302,7 +300,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_is_jsonable()
+    public function it_is_jsonable(): void
     {
         $data = new Helpers\TestDataObject([
             'mass'       => 'testing',
@@ -315,7 +313,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_is_json_serializable()
+    public function it_is_json_serializable(): void
     {
         $data = new Helpers\TestDataObject([
             'mass'       => 'testing',
@@ -328,7 +326,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_is_serializable()
+    public function it_is_serializable(): void
     {
         $data = new Helpers\TestDataObject([
             'mass'       => 'testing',
@@ -347,7 +345,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_outputs_json_when_cast_to_string()
+    public function it_outputs_json_when_cast_to_string(): void
     {
         $data = new Helpers\TestDataObject([
             'mass'       => 'testing',
@@ -362,7 +360,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_is_convertable_to_an_object()
+    public function it_is_convertable_to_an_object(): void
     {
         $data = new Helpers\TestDataObject([
             'mass'       => ['test' => true],
@@ -391,7 +389,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_is_countable()
+    public function it_is_countable(): void
     {
         $data = new Helpers\TestDataObject([
             'one'   => 'testing',
@@ -406,7 +404,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_recursively_deals_with_nested_arrayables()
+    public function it_recursively_deals_with_nested_arrayables(): void
     {
         $data = new Helpers\TestDataObject([
             'contents' => new Helpers\TestDataObject([
@@ -440,7 +438,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_takes_dot_notation_to_get_nested_data_at_depth()
+    public function it_takes_dot_notation_to_get_nested_data_at_depth(): void
     {
         $data = new Helpers\TestDataObject([
             'top' => 'test',
@@ -468,7 +466,7 @@ class DataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_returns_an_iterator()
+    public function it_returns_an_iterator(): void
     {
         $data = new Helpers\TestDataObject(['a' => 1, 'b' => 2]);
 
@@ -477,5 +475,4 @@ class DataObjectTest extends TestCase
         static::assertInstanceOf(ArrayIterator::class, $iterator);
         static::assertCount(2, $iterator);
     }
-
 }

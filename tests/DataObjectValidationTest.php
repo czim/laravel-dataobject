@@ -1,6 +1,4 @@
 <?php
-/** @noinspection ReturnTypeCanBeDeclaredInspection */
-/** @noinspection AccessModifierPresentedInspection */
 
 namespace Czim\DataObject\Test;
 
@@ -8,11 +6,16 @@ use Czim\DataObject\DataObjectServiceProvider;
 use Czim\DataObject\Test\Helpers\TestBrokenNestedDataObject;
 use Czim\DataObject\Test\Helpers\TestDataObject;
 use Czim\DataObject\Test\Helpers\TestNestedDataObject;
+use Illuminate\Foundation\Application;
 use InvalidArgumentException;
 
 class DataObjectValidationTest extends TestCase
 {
-    protected function getPackageProviders($app)
+    /**
+     * @param Application $app
+     * @return string[]
+     */
+    protected function getPackageProviders($app): array
     {
         return [
             DataObjectServiceProvider::class,
@@ -27,7 +30,7 @@ class DataObjectValidationTest extends TestCase
     /**
      * @test
      */
-    function it_validates_nested_data_objects_for_required_nested_invalid_data()
+    public function it_validates_nested_data_objects_for_required_nested_invalid_data(): void
     {
         $data = new TestNestedDataObject();
 
@@ -63,7 +66,7 @@ class DataObjectValidationTest extends TestCase
     /**
      * @test
      */
-    function it_validates_nested_data_objects_for_required_nested_valid_data()
+    public function it_validates_nested_data_objects_for_required_nested_valid_data(): void
     {
         $data         = new TestNestedDataObject();
         $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
@@ -75,7 +78,7 @@ class DataObjectValidationTest extends TestCase
      * @test
      * @depends it_validates_nested_data_objects_for_required_nested_valid_data
      */
-    function it_it_validates_nested_data_objects_for_optional_invalid_data()
+    public function it_it_validates_nested_data_objects_for_optional_invalid_data(): void
     {
         $data = new TestNestedDataObject();
         $data->nested = [ 'name' => 'no problem' ];
@@ -89,7 +92,7 @@ class DataObjectValidationTest extends TestCase
      * @test
      * @depends it_validates_nested_data_objects_for_required_nested_valid_data
      */
-    function it_it_validates_nested_data_objects_for_optional_valid_data()
+    public function it_it_validates_nested_data_objects_for_optional_valid_data(): void
     {
         $data = new TestNestedDataObject();
         $data->nested = new TestDataObject([ 'name' => 'no problem' ]);
@@ -106,7 +109,7 @@ class DataObjectValidationTest extends TestCase
     /**
      * @test
      */
-    function it_fails_validation_if_value_for_nested_dataobject_rule_could_not_be_interpreted()
+    public function it_fails_validation_if_value_for_nested_dataobject_rule_could_not_be_interpreted(): void
     {
         $data = new TestNestedDataObject();
         $data->nested = 'not a dataobject, or even an array';
@@ -122,7 +125,7 @@ class DataObjectValidationTest extends TestCase
     /**
      * @test
      */
-    function it_throws_an_exception_if_a_dataobject_validation_rule_does_not_reference_a_data_object()
+    public function it_throws_an_exception_if_a_dataobject_validation_rule_does_not_reference_a_data_object(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('# not .*validatable dataobject#i');
@@ -142,7 +145,7 @@ class DataObjectValidationTest extends TestCase
     /**
      * @test
      */
-    function it_is_recursively_arrayable_for_nested_attributes()
+    public function it_is_recursively_arrayable_for_nested_attributes(): void
     {
         $data = new TestNestedDataObject([
             'nested' => new TestDataObject([
@@ -166,7 +169,7 @@ class DataObjectValidationTest extends TestCase
     /**
      * @test
      */
-    function it_is_recursively_jsonable_for_nested_attributes()
+    public function it_is_recursively_jsonable_for_nested_attributes(): void
     {
         $data = new TestNestedDataObject([
             'nested' => new TestDataObject([
@@ -181,5 +184,4 @@ class DataObjectValidationTest extends TestCase
             'incorrect nested toJson result'
         );
     }
-
 }

@@ -1,6 +1,4 @@
 <?php
-/** @noinspection ReturnTypeCanBeDeclaredInspection */
-/** @noinspection AccessModifierPresentedInspection */
 
 namespace Czim\DataObject\Test;
 
@@ -11,7 +9,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_an_attribute_as_a_boolean()
+    public function it_casts_an_attribute_as_a_boolean(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -24,7 +22,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_an_attribute_as_an_integer()
+    public function it_casts_an_attribute_as_an_integer(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -40,7 +38,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_an_attribute_as_a_float()
+    public function it_casts_an_attribute_as_a_float(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -56,7 +54,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_an_attribute_as_a_string()
+    public function it_casts_an_attribute_as_a_string(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -72,7 +70,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_an_attribute_as_an_array()
+    public function it_casts_an_attribute_as_an_array(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -91,7 +89,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_an_attribute_as_a_data_object()
+    public function it_casts_an_attribute_as_a_data_object(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -108,7 +106,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_an_attribute_as_a_list_of_data_objects()
+    public function it_casts_an_attribute_as_a_list_of_data_objects(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -132,7 +130,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_throws_an_exception_if_it_cannot_cast_to_an_object()
+    public function it_throws_an_exception_if_it_cannot_cast_to_an_object(): void
     {
         $this->expectException(\UnexpectedValueException::class);
 
@@ -146,7 +144,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_throws_an_exception_if_it_cannot_cast_to_an_object_in_a_list()
+    public function it_throws_an_exception_if_it_cannot_cast_to_an_object_in_a_list(): void
     {
         $this->expectException(\UnexpectedValueException::class);
 
@@ -160,7 +158,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_returns_null_for_an_unset_attribute_cast_as_an_object()
+    public function it_returns_null_for_an_unset_attribute_cast_as_an_object(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -170,7 +168,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_returns_empty_objects_for_an_unset_attribute_cast_as_an_object_if_configured_to()
+    public function it_returns_empty_objects_for_an_unset_attribute_cast_as_an_object_if_configured_to(): void
     {
         $data = new Helpers\TestCastDataObjectCastNull();
 
@@ -180,7 +178,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_returns_null_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects()
+    public function it_returns_null_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -204,7 +202,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_returns_empty_object_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects_if_configured_to()
+    public function it_returns_empty_object_for_an_unset_attribute_in_an_array_cast_as_a_list_of_objects_if_configured_to(): void
     {
         $data = new Helpers\TestCastDataObjectCastNull();
 
@@ -227,7 +225,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_casts_attributes_on_toArray()
+    public function it_casts_attributes_on_toArray(): void
     {
         $data = new Helpers\TestCastDataObject();
 
@@ -265,7 +263,7 @@ class CastableDataObjectTest extends TestCase
     /**
      * @test
      */
-    function it_works_normally_without_casts_set()
+    public function it_works_normally_without_casts_set(): void
     {
         $data = new Helpers\TestCastDataObjectWithoutCasts();
 

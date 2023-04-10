@@ -54,10 +54,10 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Checks whether attribute key(s) may be assigned values
      *
-     * @param string|array $attribute   array key name or array of key names
+     * @param string|string[] $attribute array key name or array of key names
      * @throws UnassignableAttributeException
      */
-    protected function checkAttributeAssignable($attribute): void
+    protected function checkAttributeAssignable(string|array $attribute): void
     {
         if (empty($this->assignable)) {
             return;
@@ -71,7 +71,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
             return;
         }
 
-        if (! in_array($attribute, $this->assignable)) {
+        if (! in_array($attribute, $this->assignable, true)) {
             throw new UnassignableAttributeException("Not allowed to assign value for '{$attribute}'");
         }
     }
@@ -110,9 +110,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * @param string $key
      * @param mixed  $value
-     * @return $this&DataObjectInterface
+     * @return $this
      */
-    public function setAttribute(string $key, $value): DataObjectInterface
+    public function setAttribute(string $key, mixed $value): static
     {
         $this->checkAttributeAssignable($key);
 
@@ -156,9 +156,9 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
     /**
      * Clears all attributes
      *
-     * @return $this&DataObjectInterface
+     * @return $this
      */
-    public function clear(): DataObjectInterface
+    public function clear(): static
     {
         $this->attributes = [];
 
@@ -241,7 +241,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * Recursively converts parameter to array
      *
      * @param mixed $item
-     * @return array|string|null
+     * @return array<string, mixed>|string|null
      */
     protected function recursiveToArray(mixed $item): mixed
     {
@@ -262,11 +262,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
         return $item;
     }
 
-    /**
-     * @param bool $recursive
-     * @return object
-     */
-    public function toObject(bool $recursive = true)
+    public function toObject(bool $recursive = true): object
     {
         if ($recursive) {
             return $this->arrayToObject($this->attributes);
@@ -281,13 +277,12 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      * @param array<string, mixed> $array
      * @return object
      */
-    protected function arrayToObject(array $array)
+    protected function arrayToObject(array $array): object
     {
         $obj = (object) [];
 
         foreach ($array as $k => $v) {
-
-            if (strlen($k)) {
+            if ($k !== '') {
                 if (is_array($v)) {
                     $obj->{$k} = $this->arrayToObject($v);
                 } else {
@@ -301,7 +296,7 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
 
     public function toJson(int $options = 0): string
     {
-        return json_encode($this->toArray(), $options);
+        return json_encode($this->toArray(), JSON_THROW_ON_ERROR | $options);
     }
 
     /**
@@ -358,8 +353,8 @@ abstract class AbstractDataObject extends ArrayObject implements DataObjectInter
      *
      * Works with nested arrays and data objects
      *
-     * @param string|null $key  dot-notation representation of keys, null to return self
-     * @param mixed  $default   default value to return if nothing found, may be a callback
+     * @param string|null $key     dot-notation representation of keys, null to return self
+     * @param mixed       $default default value to return if nothing found, may be a callback
      * @return mixed
      */
     public function getNested(?string $key, mixed $default = null): mixed

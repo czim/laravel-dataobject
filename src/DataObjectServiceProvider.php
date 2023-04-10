@@ -4,7 +4,7 @@ namespace Czim\DataObject;
 
 use Czim\DataObject\Validation\CustomValidation;
 use Illuminate\Support\ServiceProvider;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class DataObjectServiceProvider extends ServiceProvider
 {
@@ -13,21 +13,18 @@ class DataObjectServiceProvider extends ServiceProvider
         $this->registerDataobjectRule();
     }
 
-    public function register(): void
-    {
-    }
-
-
     protected function registerDataobjectRule(): void
     {
-        Validator::extend('dataobject', function ($attribute, $value, $parameters, $validator) {
-            return (new CustomValidation())
-                ->validateDataObject($attribute, $value, $parameters, $validator);
-        });
+        Validator::extend(
+            'dataobject',
+            static fn ($attribute, $value, $parameters, $validator): bool => (new CustomValidation())
+                ->validateDataObject($attribute, $value, $parameters, $validator)
+        );
 
-        Validator::replacer('dataobject', function ($message, $attribute, $rule, $parameters) {
-            return (new CustomValidation)
-                ->replaceDataObject($message, $attribute, $rule, $parameters);
-        });
+        Validator::replacer(
+            'dataobject',
+            static fn ($message, $attribute, $rule, $parameters) => (new CustomValidation)
+                ->replaceDataObject($message, $attribute, $rule, $parameters)
+        );
     }
 }

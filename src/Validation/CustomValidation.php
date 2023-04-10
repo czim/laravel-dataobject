@@ -12,9 +12,9 @@ use Throwable;
 class CustomValidation
 {
     /**
-     * @param string                        $attribute
-     * @param mixed                         $value
-     * @param array                         $parameters
+     * @param string            $attribute
+     * @param mixed             $value
+     * @param array<int, mixed> $parameters
      * @param Validator&IlluminateValidator $validator
      * @return bool
      */
@@ -34,8 +34,8 @@ class CustomValidation
         // If the value is not already a DataObject of the type set in
         // the validation rule, make it so
         if (
-            ! ($value instanceof DataObjectInterface)
-            || ! ($value instanceof $dataObjectClass)
+            ! $value instanceof DataObjectInterface
+            || ! $value instanceof $dataObjectClass
         ) {
             $value = $this->createDataObjectFrom($value, $parameters[0]);
 
@@ -43,7 +43,7 @@ class CustomValidation
                 $validator->messages()->add(
                     $attribute,
                     $validator->makeReplacements(
-                        "Value for :attribute could not be interpreted as :friendlydataobject",
+                        'Value for :attribute could not be interpreted as :friendlydataobject',
                         $attribute, 'dataobject', $parameters
                     )
                 );
@@ -53,7 +53,7 @@ class CustomValidation
 
 
         if (! $value->validate()) {
-            // Store messages with correct relative path to failed validation messages  in the Validator
+            // Store messages with correct relative path to failed validation messages in the Validator
             foreach ($value->messages()->toArray() as $nestedAttribute => $messages) {
                 foreach ($messages as $message) {
                     $validator->messages()->add($attribute . '.' . $nestedAttribute, $message);

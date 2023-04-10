@@ -115,19 +115,15 @@ class CastableDataObject extends AbstractDataObject
     {
         $casts = $this->casts();
 
-        if (! count($casts) || ! array_key_exists($key, $casts)) {
+        if (! array_key_exists($key, $casts) || ! count($casts)) {
             return;
         }
 
-        if (! isset($this->attributes[ $key ])) {
-            $value = null;
-        } else {
-            $value = $this->attributes[ $key ];
-        }
+        $value = $this->attributes[ $key ] ?? null;
 
         // If the cast type is a simple scalar, apply it and return
         if (in_array($casts[ $key ], static::SCALAR_CASTS)) {
-            $this->attributes[ $key ] = call_user_func([$this, 'castValueAs' . ucfirst($casts[ $key ])], $value);
+            $this->attributes[ $key ] = $this->{'castValueAs' . ucfirst($casts[ $key ])}($value);
             return;
         }
 
@@ -197,8 +193,8 @@ class CastableDataObject extends AbstractDataObject
 
             throw new UnexpectedValueException(
                 "Cannot instantiate data object '{$class}' with non-array data for key '{$key}'"
-                . (is_scalar($data) || is_object($data) && method_exists($data, '__toString')
-                    ? ' (data: ' . (string) $data . ')'
+                . (is_scalar($data) || (is_object($data) && method_exists($data, '__toString'))
+                    ? ' (data: ' . $data . ')'
                     : null)
             );
         }
