@@ -22,7 +22,10 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0",
+        "nunomaduro/larastan": "^2.5",
         "orchestra/testbench": "^8.0",
+        "phpstan/phpstan-mockery": "^1.1",
+        "phpstan/phpstan-phpunit": "^1.1",
         "ext-json": "*"
     },
     "autoload": {
